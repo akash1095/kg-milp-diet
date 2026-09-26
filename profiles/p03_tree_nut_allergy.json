@@ -1,0 +1,16 @@
+{
+  "id": "p03_tree_nut_allergy",
+  "tier": "T2",
+  "query": "35-year-old woman, 58 kg, 1800-2000 kcal. I'm allergic to tree nuts but I love almonds as a snack.",
+  "age": 35,
+  "sex": "F",
+  "weight_kg": 58,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "allergies": [
+    "tree nuts"
+  ],
+  "preferred_foods": [
+    "Almonds"
+  ]
+}

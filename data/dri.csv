@@ -1,0 +1,43 @@
+stage_id,nutrient_id,rda,ul,source,status
+F_19_50,protein_g,46,,NIH DRI (RDA),approximate
+F_19_50,fiber_g,25,,NIH DRI (AI),approximate
+F_19_50,calcium_mg,1000,2500,NIH DRI,approximate
+F_19_50,iron_mg,18,45,NIH DRI,approximate
+F_19_50,potassium_mg,2600,,NIH DRI 2019 (AI),approximate
+F_19_50,vitamin_k_ug,90,,NIH DRI (AI),approximate
+F_19_50,sodium_mg,,2300,NIH DRI 2019 (CDRR),approximate
+F_51_70,protein_g,46,,NIH DRI (RDA),approximate
+F_51_70,fiber_g,21,,NIH DRI (AI),approximate
+F_51_70,calcium_mg,1200,2000,NIH DRI,approximate
+F_51_70,iron_mg,8,45,NIH DRI,approximate
+F_51_70,potassium_mg,2600,,NIH DRI 2019 (AI),approximate
+F_51_70,vitamin_k_ug,90,,NIH DRI (AI),approximate
+F_51_70,sodium_mg,,2300,NIH DRI 2019 (CDRR),approximate
+F_71_plus,protein_g,46,,NIH DRI (RDA),approximate
+F_71_plus,fiber_g,21,,NIH DRI (AI),approximate
+F_71_plus,calcium_mg,1200,2000,NIH DRI,approximate
+F_71_plus,iron_mg,8,45,NIH DRI,approximate
+F_71_plus,potassium_mg,2600,,NIH DRI 2019 (AI),approximate
+F_71_plus,vitamin_k_ug,90,,NIH DRI (AI),approximate
+F_71_plus,sodium_mg,,2300,NIH DRI 2019 (CDRR),approximate
+M_19_50,protein_g,56,,NIH DRI (RDA),approximate
+M_19_50,fiber_g,38,,NIH DRI (AI),approximate
+M_19_50,calcium_mg,1000,2500,NIH DRI,approximate
+M_19_50,iron_mg,8,45,NIH DRI,approximate
+M_19_50,potassium_mg,3400,,NIH DRI 2019 (AI),approximate
+M_19_50,vitamin_k_ug,120,,NIH DRI (AI),approximate
+M_19_50,sodium_mg,,2300,NIH DRI 2019 (CDRR),approximate
+M_51_70,protein_g,56,,NIH DRI (RDA),approximate
+M_51_70,fiber_g,30,,NIH DRI (AI),approximate
+M_51_70,calcium_mg,1000,2000,NIH DRI,approximate
+M_51_70,iron_mg,8,45,NIH DRI,approximate
+M_51_70,potassium_mg,3400,,NIH DRI 2019 (AI),approximate
+M_51_70,vitamin_k_ug,120,,NIH DRI (AI),approximate
+M_51_70,sodium_mg,,2300,NIH DRI 2019 (CDRR),approximate
+M_71_plus,protein_g,56,,NIH DRI (RDA),approximate
+M_71_plus,fiber_g,30,,NIH DRI (AI),approximate
+M_71_plus,calcium_mg,1200,2000,NIH DRI,approximate
+M_71_plus,iron_mg,8,45,NIH DRI,approximate
+M_71_plus,potassium_mg,3400,,NIH DRI 2019 (AI),approximate
+M_71_plus,vitamin_k_ug,120,,NIH DRI (AI),approximate
+M_71_plus,sodium_mg,,2300,NIH DRI 2019 (CDRR),approximate

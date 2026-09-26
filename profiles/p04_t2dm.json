@@ -1,0 +1,13 @@
+{
+  "id": "p04_t2dm",
+  "tier": "T2",
+  "query": "58-year-old man, 88 kg, type 2 diabetes, 2000-2200 kcal.",
+  "age": 58,
+  "sex": "M",
+  "weight_kg": 88,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "conditions": [
+    "type 2 diabetes"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "p08_jain_ckd3",
+  "tier": "T3",
+  "query": "60-year-old Jain woman, 60 kg, chronic kidney disease stage 3, 1600-1800 kcal.",
+  "age": 60,
+  "sex": "F",
+  "weight_kg": 60,
+  "kcal_min": 1600,
+  "kcal_max": 1800,
+  "conditions": [
+    "ckd"
+  ],
+  "diets": [
+    "jain"
+  ]
+}

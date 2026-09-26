@@ -1,0 +1,8 @@
+diet_id,forbids_class,source,status
+vegan,animal_food,Diet definition (curated),curated
+vegetarian,meat,Diet definition (curated),curated
+vegetarian,fish_seafood,Diet definition (curated),curated
+jain,meat,Diet definition (curated),curated
+jain,fish_seafood,Diet definition (curated),curated
+jain,egg_product,Diet definition (curated),curated
+jain,root_vegetable,Diet definition (curated),curated

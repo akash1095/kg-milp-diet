@@ -1,0 +1,24 @@
+class_id,label,parent
+food,Food,
+plant_food,Plant food,food
+animal_food,Animal food,food
+grain,Grain,plant_food
+legume,Legume,plant_food
+nut_seed,Nut or seed,plant_food
+tree_nut_food,Tree nut,nut_seed
+seed,Seed,nut_seed
+vegetable,Vegetable,plant_food
+root_vegetable,Root or bulb vegetable,vegetable
+leafy_green,Leafy green,vegetable
+other_vegetable,Other vegetable,vegetable
+fruit,Fruit,plant_food
+plant_oil,Plant oil,plant_food
+meat,Meat,animal_food
+red_meat,Red meat,meat
+poultry,Poultry,meat
+fish_seafood,Fish or seafood,animal_food
+dairy,Dairy,animal_food
+cheese,Cheese,dairy
+aged_cheese,Aged cheese,cheese
+fresh_cheese,Fresh cheese,cheese
+egg_product,Egg,animal_food

@@ -1,0 +1,12 @@
+allergen_id,label,parent,list,aliases
+peanut,Peanut,,FDA-9,peanuts
+tree_nut,Tree nut,,FDA-9,tree nuts|nuts
+almond,Almond,tree_nut,,almonds
+cashew,Cashew,tree_nut,,cashews
+walnut,Walnut,tree_nut,,walnuts
+milk,Milk,,FDA-9,dairy|lactose
+egg,Egg,,FDA-9,eggs
+fish,Fish,,FDA-9,
+salmon,Salmon,fish,,
+tuna,Tuna,fish,,
+cod,Cod,fish,,

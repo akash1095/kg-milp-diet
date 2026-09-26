@@ -1,0 +1,17 @@
+{
+  "id": "p07_t2dm_htn_treenut",
+  "tier": "T3",
+  "query": "55-year-old woman, 70 kg, type 2 diabetes and high blood pressure, allergic to tree nuts, 1800-1900 kcal.",
+  "age": 55,
+  "sex": "F",
+  "weight_kg": 70,
+  "kcal_min": 1800,
+  "kcal_max": 1900,
+  "conditions": [
+    "type 2 diabetes",
+    "hypertension"
+  ],
+  "allergies": [
+    "tree nuts"
+  ]
+}

@@ -1,0 +1,4 @@
+condition_id,label,icd10,aliases
+t2dm,Type 2 diabetes,E11,type 2 diabetes|diabetes|t2d|diabetic
+hypertension,Hypertension,I10,high blood pressure|htn
+ckd3,Chronic kidney disease stage 3,N18.3,ckd|kidney disease|chronic kidney disease

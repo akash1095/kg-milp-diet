@@ -1,0 +1,13 @@
+{
+  "id": "p05_vegan",
+  "tier": "T2",
+  "query": "28-year-old vegan woman, 55 kg, 1800-2000 kcal.",
+  "age": 28,
+  "sex": "F",
+  "weight_kg": 55,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "diets": [
+    "vegan"
+  ]
+}

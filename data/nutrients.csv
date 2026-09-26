@@ -1,0 +1,14 @@
+nutrient_id,name,unit,kcal_per_g
+energy_kcal,Energy,kcal,
+protein_g,Protein,g,4
+carbs_g,Carbohydrate,g,4
+fat_g,Total fat,g,9
+sat_fat_g,Saturated fat,g,9
+fiber_g,Dietary fiber,g,
+sugar_g,Total sugars,g,4
+sodium_mg,Sodium,mg,
+potassium_mg,Potassium,mg,
+phosphorus_mg,Phosphorus,mg,
+calcium_mg,Calcium,mg,
+iron_mg,Iron,mg,
+vitamin_k_ug,Vitamin K,ug,

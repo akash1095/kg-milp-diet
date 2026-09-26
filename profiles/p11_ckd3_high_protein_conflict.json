@@ -1,0 +1,19 @@
+{
+  "id": "p11_ckd3_high_protein_conflict",
+  "tier": "T4",
+  "query": "40-year-old man, 70 kg, CKD stage 3, wants 120 g protein a day, 2200-2400 kcal.",
+  "age": 40,
+  "sex": "M",
+  "weight_kg": 70,
+  "kcal_min": 2200,
+  "kcal_max": 2400,
+  "conditions": [
+    "ckd"
+  ],
+  "nutrient_bounds": {
+    "protein_g": {
+      "min": 120
+    }
+  },
+  "expect_infeasible": true
+}

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kgdiet"
+version = "0.1.0"
+description = "Knowledge-graph-to-MILP compiler for personalized diet planning (research prototype)"
+requires-python = ">=3.10"
+dependencies = ["pulp>=2.8", "highspy>=1.7"]
+
+[project.optional-dependencies]
+llm = ["anthropic"]
+dev = ["pytest"]
+
+[project.scripts]
+kgdiet = "kgdiet.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

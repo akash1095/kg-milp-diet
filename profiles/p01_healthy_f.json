@@ -1,0 +1,10 @@
+{
+  "id": "p01_healthy_f",
+  "tier": "T1",
+  "query": "I'm a 30-year-old woman, 62 kg. Give me a balanced day at 1800-2000 kcal.",
+  "age": 30,
+  "sex": "F",
+  "weight_kg": 62,
+  "kcal_min": 1800,
+  "kcal_max": 2000
+}

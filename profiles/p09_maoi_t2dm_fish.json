@@ -1,0 +1,19 @@
+{
+  "id": "p09_maoi_t2dm_fish",
+  "tier": "T3",
+  "query": "50-year-old man, 82 kg, takes phenelzine, has type 2 diabetes, allergic to fish, 2100-2300 kcal.",
+  "age": 50,
+  "sex": "M",
+  "weight_kg": 82,
+  "kcal_min": 2100,
+  "kcal_max": 2300,
+  "drugs": [
+    "phenelzine"
+  ],
+  "conditions": [
+    "t2dm"
+  ],
+  "allergies": [
+    "fish"
+  ]
+}

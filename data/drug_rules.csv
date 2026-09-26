@@ -1,0 +1,3 @@
+rule_type,drug_id,target,lo,hi,unit,severity,source,section,url,status
+STABLE,warfarin,vitamin_k_ug,90,150,ug,,NIH ODS vitamin K fact sheet,<to transcribe>,<to transcribe>,placeholder
+AVOID,phenelzine,aged_cheese,,,,high,Drug label (tyramine interaction),<to transcribe>,<to transcribe>,placeholder

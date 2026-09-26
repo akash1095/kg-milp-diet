@@ -1,0 +1,12 @@
+rule_type,condition_id,nutrient_id,value,unit,basis,source,section,url,status
+LIMITS,t2dm,sat_fat_g,10,pct,pct_kcal,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
+LIMITS,t2dm,sugar_g,50,g,per_day,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
+REQUIRES,t2dm,fiber_g,14,g,per_1000kcal,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
+LIMITS,t2dm,sodium_mg,2300,mg,per_day,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
+LIMITS,hypertension,sodium_mg,1500,mg,per_day,AHA dietary guidance,<to transcribe>,<to transcribe>,placeholder
+REQUIRES,hypertension,potassium_mg,3500,mg,per_day,AHA/DASH,<to transcribe>,<to transcribe>,placeholder
+LIMITS,hypertension,sat_fat_g,6,pct,pct_kcal,AHA dietary guidance,<to transcribe>,<to transcribe>,placeholder
+LIMITS,ckd3,protein_g,0.8,g,per_kg,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
+LIMITS,ckd3,sodium_mg,2000,mg,per_day,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
+LIMITS,ckd3,potassium_mg,2000,mg,per_day,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
+LIMITS,ckd3,phosphorus_mg,1000,mg,per_day,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder

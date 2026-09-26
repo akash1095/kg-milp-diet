@@ -1,0 +1,13 @@
+{
+  "id": "p06_warfarin",
+  "tier": "T2",
+  "query": "67-year-old man on warfarin, 75 kg, 2000-2200 kcal.",
+  "age": 67,
+  "sex": "M",
+  "weight_kg": 75,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "drugs": [
+    "warfarin"
+  ]
+}

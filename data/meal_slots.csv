@@ -1,0 +1,5 @@
+slot_id,code,label,kcal_share_min,kcal_share_max
+breakfast,B,Breakfast,0.20,0.30
+lunch,L,Lunch,0.30,0.40
+dinner,D,Dinner,0.30,0.40
+snack,S,Snack,0.00,0.15

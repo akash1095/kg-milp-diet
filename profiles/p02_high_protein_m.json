@@ -1,0 +1,15 @@
+{
+  "id": "p02_high_protein_m",
+  "tier": "T1",
+  "query": "45-year-old man, 80 kg, 2200-2400 kcal with at least 110 g protein.",
+  "age": 45,
+  "sex": "M",
+  "weight_kg": 80,
+  "kcal_min": 2200,
+  "kcal_max": 2400,
+  "nutrient_bounds": {
+    "protein_g": {
+      "min": 110
+    }
+  }
+}
