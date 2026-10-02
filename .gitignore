@@ -14,5 +14,4 @@ data/FoodData_Central_*/
 results/
 
 # local secrets and Neo4j docker volumes
-.env
 neo4j/
