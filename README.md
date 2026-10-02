@@ -20,17 +20,20 @@ egg, fish) with subclasses**, plus 2 drugs, 3 diet patterns and 4 meal slots.
 > 2017/2025 and KDOQI 2020 with statement numbers and quotes, but are not yet
 > verified by hand (`status` column). Not medical advice.
 
-## Setup (Windows, PowerShell)
+## Setup
+
+Requires [Poetry](https://python-poetry.org/) and Python >= 3.10.
 
 ```powershell
 cd D:\Projects\kg-milp-diet
-py -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -e ".[dev]"          # add ,llm for the optional LLM layer
-pytest
+poetry install              # add -E llm for the optional LLM layer
+poetry run pytest
+poetry run kgdiet stats
 ```
 
-macOS/Linux: `python3 -m venv .venv && source .venv/bin/activate`, then the same.
+`poetry install` creates an in-project `.venv` and installs the `dev`
+dependency group (pytest) by default. Prefix any command with `poetry run`,
+or `poetry shell` to activate the virtualenv for the session.
 
 ## Try it
 
@@ -46,7 +49,7 @@ kgdiet experiment --profiles profiles\v1 --out results\v1 --time-limit 12 --jobs
 kgdiet export-cypher                                     # Neo4j load script -> cypher\load.cypher
 ```
 
-Optional LLM layer (needs `pip install -e ".[llm]"` and `ANTHROPIC_API_KEY`):
+Optional LLM layer (needs `poetry install -E llm` and `ANTHROPIC_API_KEY`):
 
 ```powershell
 kgdiet parse "I'm 55, female, 70 kg, diabetic with high blood pressure, allergic to tree nuts, about 1850 kcal" --id p12 --out profiles\p12.json

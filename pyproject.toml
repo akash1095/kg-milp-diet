@@ -1,23 +1,32 @@
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "kgdiet"
+name = "kg-milp-diet"
 version = "0.1.0"
 description = "Knowledge-graph-to-MILP compiler for personalized diet planning (research prototype)"
-requires-python = ">=3.10"
-dependencies = ["pulp>=2.8", "highspy>=1.7"]
+authors = [
+    {name = "akash"}
+]
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "pulp>=2.8,<4.0",
+    "highspy>=1.7",
+]
 
 [project.optional-dependencies]
 llm = ["anthropic"]
-dev = ["pytest"]
 
 [project.scripts]
 kgdiet = "kgdiet.cli:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "kgdiet", from = "src" }]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

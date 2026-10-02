@@ -1,3 +1,0 @@
-pulp>=2.8
-highspy>=1.7
-pytest
