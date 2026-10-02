@@ -6,10 +6,12 @@ __pycache__/
 cypher/load.cypher
 *.lp
 *.mps
+.env
 
 # raw USDA download (large; re-download from fdc.nal.usda.gov)
 data/FoodData_Central_*/
-results/*/run.log
+
+results/
 
 # local secrets and Neo4j docker volumes
 .env
