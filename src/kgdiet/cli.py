@@ -77,7 +77,8 @@ def cmd_parse(args) -> int:
 
 def cmd_experiment(args) -> int:
     from .experiment import run
-    rows = run(args.profiles, args.out, systems=args.systems, data_dir=args.data, time_limit=args.time_limit)
+    rows = run(args.profiles, args.out, systems=args.systems, data_dir=args.data, time_limit=args.time_limit,
+               jobs=args.jobs)
     print((Path(args.out) / "summary.md").read_text(encoding="utf-8"))
     print(f"{len(rows)} runs written to {Path(args.out) / 'runs.csv'}")
     return 0
@@ -126,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--out", default=str(ROOT / "results"))
     e.add_argument("--systems", nargs="*")
     e.add_argument("--time-limit", type=int, default=30)
+    e.add_argument("--jobs", type=int, default=1, help="parallel worker processes")
     e.set_defaults(func=cmd_experiment)
 
     st = sub.add_parser("stats", help="KG node and edge counts")

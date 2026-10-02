@@ -1,0 +1,18 @@
+{
+  "id": "v2_019_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 71,
+  "weight_kg": 74,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "allergies": [
+    "peanut"
+  ],
+  "preferred_foods": [
+    "Peanut butter"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 71-year-old woman, 74 kg. I'm allergic to peanut, but I love peanut butter. Plan a day at 1800-2000 kcal a day.",
+  "expect_infeasible": false
+}

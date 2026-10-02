@@ -1,0 +1,17 @@
+{
+  "id": "v2_002_T1",
+  "tier": "T1",
+  "sex": "F",
+  "age": 48,
+  "weight_kg": 70,
+  "kcal_min": 1600,
+  "kcal_max": 1800,
+  "nutrient_bounds": {
+    "protein_g": {
+      "min": 100
+    }
+  },
+  "objective": "nutrition",
+  "query": "I'm a 48-year-old woman, 70 kg. I want at least 100 g of protein. Plan a day at 1600-1800 kcal a day.",
+  "expect_infeasible": false
+}

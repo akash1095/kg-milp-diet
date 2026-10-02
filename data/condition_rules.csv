@@ -1,12 +1,14 @@
-rule_type,condition_id,nutrient_id,value,unit,basis,source,section,url,status
-LIMITS,t2dm,sat_fat_g,10,pct,pct_kcal,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
-LIMITS,t2dm,sugar_g,50,g,per_day,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
-REQUIRES,t2dm,fiber_g,14,g,per_1000kcal,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
-LIMITS,t2dm,sodium_mg,2300,mg,per_day,ADA Standards of Care,<to transcribe>,<to transcribe>,placeholder
-LIMITS,hypertension,sodium_mg,1500,mg,per_day,AHA dietary guidance,<to transcribe>,<to transcribe>,placeholder
-REQUIRES,hypertension,potassium_mg,3500,mg,per_day,AHA/DASH,<to transcribe>,<to transcribe>,placeholder
-LIMITS,hypertension,sat_fat_g,6,pct,pct_kcal,AHA dietary guidance,<to transcribe>,<to transcribe>,placeholder
-LIMITS,ckd3,protein_g,0.8,g,per_kg,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
-LIMITS,ckd3,sodium_mg,2000,mg,per_day,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
-LIMITS,ckd3,potassium_mg,2000,mg,per_day,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
-LIMITS,ckd3,phosphorus_mg,1000,mg,per_day,KDIGO/KDOQI nutrition guideline,<to transcribe>,<to transcribe>,placeholder
+rule_id,rule_type,condition_id,nutrient_id,value,unit,basis,only_if,except_if,source,statement,quote,url,status
+R01,LIMITS,t2dm,sodium_mg,2300,mg,per_day,,,"ADA Standards of Care 2026, Section 5",Rec. 5.20,"limit sodium consumption to <2,300 mg/day, as clinically appropriate",https://pmc.ncbi.nlm.nih.gov/articles/PMC12690188,quoted-unverified
+R02,REQUIRES,t2dm,fiber_g,14,g,per_1000kcal,,,"ADA Standards of Care 2026, Section 5",Rec. 5.24,"at least 14 g fiber per 1,000 kcal",https://pmc.ncbi.nlm.nih.gov/articles/PMC12690188,quoted-unverified
+R03,REQUIRES,t2dm,protein_g,0.8,g,per_kg,ckd3,,ADA Standards of Care 2026,section to confirm,below the recommended daily allowance of 0.8 g/kg is not recommended,https://pmc.ncbi.nlm.nih.gov/articles/PMC12690188,quoted-unverified
+R04,LIMITS,hypertension,sodium_mg,1500,mg,per_day,,,2025 AHA/ACC High Blood Pressure Guideline,to find,"reduce sodium intake, ideally to <1,500 mg/day",https://www.ahajournals.org/doi/10.1161/CIR.0000000000001356,secondary-source
+R05,REQUIRES,hypertension,potassium_mg,3500,mg,per_day,,ckd3,2017 ACC/AHA Hypertension Guideline,"Nonpharmacological interventions, Class I, LOE A",unless contraindicated by the presence of CKD; target 3500-5000 mg/day,https://www.sciencedirect.com/science/article/pii/S073510971741518X,quoted-unverified
+R06,LIMITS,ckd3,protein_g,0.6,g,per_kg,,t2dm,KDOQI Nutrition in CKD 2020,3.0.1,0.55-0.60 g dietary protein/kg body weight/day,https://www.nefrologialombardia.it/public/ckeditor/data/linee-guida-2020-nutrizione-nella-malattia-renale-cronica.pdf,quoted-unverified
+R07a,LIMITS,ckd3,protein_g,0.8,g,per_kg,t2dm,,KDOQI Nutrition in CKD 2020,3.0.2,0.6-0.8 g/kg body weight per day,https://www.nefrologialombardia.it/public/ckeditor/data/linee-guida-2020-nutrizione-nella-malattia-renale-cronica.pdf,quoted-unverified
+R07b,REQUIRES,ckd3,protein_g,0.6,g,per_kg,t2dm,,KDOQI Nutrition in CKD 2020,3.0.2,0.6-0.8 g/kg body weight per day,https://www.nefrologialombardia.it/public/ckeditor/data/linee-guida-2020-nutrizione-nella-malattia-renale-cronica.pdf,quoted-unverified
+R08,LIMITS,ckd3,sodium_mg,2300,mg,per_day,,,KDOQI Nutrition in CKD 2020,6.5.1,less than 100 mmol/d (or <2.3 g/d),https://www.nefrologialombardia.it/public/ckeditor/data/linee-guida-2020-nutrizione-nella-malattia-renale-cronica.pdf,quoted-unverified
+R10,ADVISES,t2dm,sat_fat_g,,,,,,"ADA Standards of Care 2026, Section 5",Rec. 5.31,limit intake of foods high in saturated fat,https://pmc.ncbi.nlm.nih.gov/articles/PMC12690188,qualitative
+R11,ADVISES,t2dm,sugar_g,,,,,,"ADA Standards of Care 2026, Section 5",Rec. 5.25,replace sugar-sweetened beverages (including any juices) with water or low-calorie or no-calorie beverages,https://pmc.ncbi.nlm.nih.gov/articles/PMC12690188,qualitative
+R12,ADVISES,ckd3,potassium_mg,,,,,,KDOQI Nutrition in CKD 2020,6.4.1,adjust dietary potassium intake to maintain serum potassium within the normal range,https://www.nefrologialombardia.it/public/ckeditor/data/linee-guida-2020-nutrizione-nella-malattia-renale-cronica.pdf,qualitative
+R13,ADVISES,ckd3,phosphorus_mg,,,,,,KDOQI Nutrition in CKD 2020,6.3.1,adjusting dietary phosphorus intake to maintain serum phosphate levels in the normal range,https://www.nefrologialombardia.it/public/ckeditor/data/linee-guida-2020-nutrizione-nella-malattia-renale-cronica.pdf,qualitative

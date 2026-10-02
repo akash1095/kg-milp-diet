@@ -1,6 +1,6 @@
 {
   "id": "p10_htn_ckd3_conflict",
-  "tier": "T4",
+  "tier": "T3",
   "query": "62-year-old man, 78 kg, hypertension and CKD stage 3, 1900-2100 kcal.",
   "age": 62,
   "sex": "M",
@@ -11,5 +11,5 @@
     "hypertension",
     "ckd"
   ],
-  "expect_infeasible": true
+  "expect_infeasible": false
 }

@@ -1,0 +1,19 @@
+{
+  "id": "v2_032_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 50,
+  "weight_kg": 77,
+  "kcal_min": 2300,
+  "kcal_max": 2500,
+  "conditions": [
+    "t2dm"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 50-year-old man, 77 kg. I have type 2 diabetes. Plan a day at 2300-2500 kcal a day.",
+  "expect_infeasible": false
+}

@@ -1,0 +1,20 @@
+{
+  "id": "v2_073_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 53,
+  "weight_kg": 57,
+  "kcal_min": 1600,
+  "kcal_max": 1800,
+  "diets": [
+    "jain"
+  ],
+  "preferred_foods": [
+    "Onion (raw)",
+    "Carrot (raw)",
+    "Sweet potato (baked)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 53-year-old woman, 57 kg. I follow a jain diet. Plan a day at 1600-1800 kcal a day.",
+  "expect_infeasible": false
+}

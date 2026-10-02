@@ -1,0 +1,19 @@
+{
+  "id": "v1_014_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 43,
+  "weight_kg": 84,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "allergies": [
+    "fish"
+  ],
+  "preferred_foods": [
+    "Salmon (cooked)",
+    "Tuna (canned in water)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 43-year-old man, 84 kg. I'm allergic to fish, but I love salmon. Plan a day at 2000-2200 kcal a day.",
+  "expect_infeasible": false
+}

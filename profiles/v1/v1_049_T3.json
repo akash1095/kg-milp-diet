@@ -1,0 +1,26 @@
+{
+  "id": "v1_049_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 72,
+  "weight_kg": 90,
+  "kcal_min": 2100,
+  "kcal_max": 2300,
+  "conditions": [
+    "ckd"
+  ],
+  "allergies": [],
+  "diets": [
+    "jain"
+  ],
+  "drugs": [],
+  "preferred_foods": [
+    "Carrot (raw)",
+    "Cheddar cheese",
+    "Egg (hard-boiled)",
+    "Potato (baked with skin)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 72-year-old man, 90 kg. I have chronic kidney disease stage 3. I follow a jain diet. Plan a day at 2100-2300 kcal a day.",
+  "expect_infeasible": false
+}

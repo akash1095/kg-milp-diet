@@ -1,0 +1,17 @@
+{
+  "id": "v1_004_T1",
+  "tier": "T1",
+  "sex": "F",
+  "age": 30,
+  "weight_kg": 69,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "nutrient_bounds": {
+    "protein_g": {
+      "min": 100
+    }
+  },
+  "objective": "nutrition",
+  "query": "I'm a 30-year-old woman, 69 kg. I want at least 100 g of protein. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

@@ -1,0 +1,19 @@
+{
+  "id": "v2_087_T4",
+  "tier": "T4",
+  "sex": "F",
+  "age": 74,
+  "weight_kg": 56,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "conditions": [
+    "ckd"
+  ],
+  "nutrient_bounds": {
+    "protein_g": {
+      "min": 120
+    }
+  },
+  "query": "I'm a 74-year-old woman, 56 kg. I have chronic kidney disease stage 3. I want 120 g of protein a day. Plan a day at 1800-2000 kcal a day.",
+  "expect_infeasible": true
+}

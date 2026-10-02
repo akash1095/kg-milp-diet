@@ -31,7 +31,8 @@ def main() -> None:
     fdc = Path(args.fdc_dir)
 
     with open(fdc / "nutrient.csv", newline="", encoding="utf-8") as fh:
-        nbr_to_id = {r["nutrient_nbr"].split(".")[0]: r["id"] for r in csv.DictReader(fh) if r.get("nutrient_nbr")}
+        # exact nutrient numbers only: "205.2" (carbohydrate by summation) must not replace "205"
+        nbr_to_id = {r["nutrient_nbr"].strip(): r["id"] for r in csv.DictReader(fh) if r.get("nutrient_nbr")}
     id_to_col = {nbr_to_id[n]: col for col, n in NUTRIENT_NBR.items() if n in nbr_to_id}
 
     with open(args.foods, newline="", encoding="utf-8") as fh:
@@ -45,6 +46,7 @@ def main() -> None:
             if r["fdc_id"] in wanted and r["nutrient_id"] in id_to_col:
                 values.setdefault(r["fdc_id"], {})[id_to_col[r["nutrient_id"]]] = float(r["amount"])
 
+    provenance = []
     for row in foods:
         if not row["fdc_id"]:
             continue
@@ -52,6 +54,10 @@ def main() -> None:
         missing = [c for c in NUTRIENT_NBR if c not in got]
         for col, v in got.items():
             row[col] = f"{v:g}"
+        for col in NUTRIENT_NBR:
+            provenance.append({"food_id": row["food_id"], "nutrient_id": col, "fdc_id": row["fdc_id"],
+                               "source": "USDA FDC SR Legacy 2018-04" if col in got else
+                               "imputed (not reported in SR Legacy; approximate value kept)"})
         print(f"{row['food_id']} {row['name']}: updated {len(got)} nutrients"
               + (f"; missing {missing} (kept old values)" if missing else ""))
 
@@ -59,6 +65,13 @@ def main() -> None:
         w = csv.DictWriter(fh, fieldnames=fields)
         w.writeheader()
         w.writerows(foods)
+    prov_path = Path(args.foods).with_name("nutrient_provenance.csv")
+    with open(prov_path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=["food_id", "nutrient_id", "fdc_id", "source"])
+        w.writeheader()
+        w.writerows(provenance)
+    imputed = [p for p in provenance if p["source"].startswith("imputed")]
+    print(f"{len(provenance) - len(imputed)} USDA values, {len(imputed)} imputed -> {prov_path.name}")
 
 
 if __name__ == "__main__":

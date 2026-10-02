@@ -109,15 +109,23 @@ class KG:
             kg.add_node("Condition", r["condition_id"], name=r["label"], icd10=r["icd10"],
                         aliases=_aliases(r))
         for r in _read(d / "condition_rules.csv"):
-            props = dict(unit=r["unit"], basis=r["basis"], source=r["source"],
-                         section=r["section"], url=r["url"], status=r["status"])
+            props = dict(rule_id=r["rule_id"], source=r["source"], statement=r["statement"],
+                         quote=r["quote"], url=r["url"], status=r["status"],
+                         only_if=[f"Condition:{c}" for c in _split(r["only_if"])],
+                         except_if=[f"Condition:{c}" for c in _split(r["except_if"])])
+            if r["rule_type"] == "ADVISES":  # qualitative: kept as advice, never compiled
+                kg.add_edge("ADVISES", f"Condition:{r['condition_id']}",
+                            f"Nutrient:{r['nutrient_id']}", **props)
+                continue
+            props.update(unit=r["unit"], basis=r["basis"])
             props["max" if r["rule_type"] == "LIMITS" else "min"] = float(r["value"])
             kg.add_edge(r["rule_type"], f"Condition:{r['condition_id']}",
                         f"Nutrient:{r['nutrient_id']}", **props)
         for r in _read(d / "drugs.csv"):
             kg.add_node("Drug", r["drug_id"], name=r["label"], code=r["code"], aliases=_aliases(r))
         for r in _read(d / "drug_rules.csv"):
-            common = dict(source=r["source"], section=r["section"], url=r["url"], status=r["status"])
+            common = dict(rule_id=r["rule_id"], source=r["source"], statement=r["statement"],
+                          quote=r["quote"], url=r["url"], status=r["status"])
             if r["rule_type"] == "STABLE":
                 kg.add_edge("STABLE", f"Drug:{r['drug_id']}", f"Nutrient:{r['target']}",
                             lo=float(r["lo"]), hi=float(r["hi"]), unit=r["unit"], **common)
@@ -146,11 +154,11 @@ class KG:
 
     def resolve(self, label: str, text: str) -> str | None:
         """Map a user word (id, name or alias) to a node id of ``label``."""
-        t = text.strip().lower().replace("-", " ").replace("_", " ")
+        t = _norm(text)
         for nid in self.ids(label):
             n = self.nodes[nid]
-            names = {n["key"].lower().replace("_", " "), str(n.get("name", "")).lower()}
-            names |= {a.lower() for a in n.get("aliases", [])}
+            names = {_norm(n["key"]), _norm(str(n.get("name", "")))}
+            names |= {_norm(a) for a in n.get("aliases", [])}
             if t in names:
                 return nid
         return None
@@ -222,14 +230,28 @@ class KG:
                                  "source": e.props.get("source", "")})
         return rows
 
-    def q_condition_rules(self, conditions: list[str]) -> list[dict]:
-        """M5-M7: (u)-[:HAS_CONDITION]->(c)-[r:LIMITS|REQUIRES]->(n)."""
+    def q_condition_rules(self, conditions: list[str], context: bool = True) -> list[dict]:
+        """M5-M7: (u)-[:HAS_CONDITION]->(c)-[r:LIMITS|REQUIRES|ADVISES]->(n).
+
+        Rule context (only_if / except_if) is checked against the user's other
+        conditions. Each row says whether the rule is active; suspended rows are
+        kept so explanations can say why a rule was not applied. With
+        ``context=False`` every rule is active (a flat rule table).
+        """
+        have = set(conditions)
         rows = []
         for c in conditions:
             for e in self.out_edges[c]:
-                if e.type in ("LIMITS", "REQUIRES"):
-                    rows.append({"rule_type": e.type, "owner": c, "nutrient": e.dst, **e.props,
-                                 "path": ["User", "HAS_CONDITION", c, e.type, e.dst]})
+                if e.type not in ("LIMITS", "REQUIRES", "ADVISES"):
+                    continue
+                missing = [x for x in e.props.get("only_if", []) if x not in have]
+                blocked = [x for x in e.props.get("except_if", []) if x in have]
+                active = not context or (not missing and not blocked)
+                path = ["User", "HAS_CONDITION", c, e.type, e.dst]
+                if context and e.props.get("only_if"):
+                    path += ["ONLY_IF", *e.props["only_if"]]
+                rows.append({"rule_type": e.type, "owner": c, "nutrient": e.dst, **e.props,
+                             "active": active, "missing": missing, "blocked": blocked, "path": path})
         return rows
 
     def q_drug_stable(self, drugs: list[str]) -> list[dict]:
@@ -279,6 +301,14 @@ def _stage_name(r: dict) -> str:
     who = "women" if r["sex"] == "F" else "men"
     top = "+" if int(r["age_max"]) >= 120 else f"-{r['age_max']}"
     return f"DRI group ({who} {r['age_min']}{top})"
+
+
+def _norm(text: str) -> str:
+    return " ".join(text.strip().lower().replace("-", " ").replace("_", " ").split())
+
+
+def _split(value: str | None) -> list[str]:
+    return [v.strip() for v in (value or "").split("|") if v.strip()]
 
 
 def _aliases(row: dict) -> list[str]:

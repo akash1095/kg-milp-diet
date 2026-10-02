@@ -1,0 +1,21 @@
+{
+  "id": "v2_083_T3",
+  "tier": "T3",
+  "sex": "F",
+  "age": 53,
+  "weight_kg": 56,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "conditions": [
+    "t2dm",
+    "ckd"
+  ],
+  "preferred_foods": [
+    "Potato (baked with skin)",
+    "Banana",
+    "Chicken breast (cooked)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 53-year-old woman, 56 kg. I have type 2 diabetes and chronic kidney disease stage 3. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

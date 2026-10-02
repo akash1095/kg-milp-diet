@@ -1,0 +1,20 @@
+{
+  "id": "v2_060_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 71,
+  "weight_kg": 64,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "allergies": [
+    "tree nuts"
+  ],
+  "preferred_foods": [
+    "Almonds",
+    "Cashews",
+    "Walnuts"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 71-year-old woman, 64 kg. I'm allergic to tree nuts. I love almonds. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

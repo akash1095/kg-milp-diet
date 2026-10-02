@@ -1,0 +1,27 @@
+{
+  "id": "v1_042_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 72,
+  "weight_kg": 73,
+  "kcal_min": 2300,
+  "kcal_max": 2500,
+  "conditions": [
+    "t2dm",
+    "hypertension"
+  ],
+  "allergies": [
+    "tree nuts"
+  ],
+  "diets": [],
+  "drugs": [],
+  "preferred_foods": [
+    "Almonds",
+    "Cheddar cheese",
+    "Potato (baked with skin)",
+    "Walnuts"
+  ],
+  "objective": "cost",
+  "query": "I'm a 72-year-old man, 73 kg. I have type 2 diabetes and high blood pressure. I'm allergic to tree nuts. Plan a day at 2300-2500 kcal a day.",
+  "expect_infeasible": false
+}

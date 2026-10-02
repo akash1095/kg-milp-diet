@@ -1,0 +1,20 @@
+{
+  "id": "v1_061_T4",
+  "tier": "T4",
+  "sex": "M",
+  "age": 72,
+  "weight_kg": 95,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "conditions": [
+    "t2dm",
+    "ckd"
+  ],
+  "nutrient_bounds": {
+    "protein_g": {
+      "max": 40
+    }
+  },
+  "query": "I'm a 72-year-old man, 95 kg. I have type 2 diabetes and chronic kidney disease stage 3. Keep protein under 40 g. Plan a day at 2000-2200 kcal a day.",
+  "expect_infeasible": true
+}

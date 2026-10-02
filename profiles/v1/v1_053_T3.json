@@ -1,0 +1,32 @@
+{
+  "id": "v1_053_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 71,
+  "weight_kg": 76,
+  "kcal_min": 2200,
+  "kcal_max": 2400,
+  "conditions": [
+    "hypertension"
+  ],
+  "allergies": [
+    "tree nuts",
+    "peanut"
+  ],
+  "diets": [
+    "vegetarian"
+  ],
+  "drugs": [],
+  "preferred_foods": [
+    "Almonds",
+    "Cheddar cheese",
+    "Chicken breast (cooked)",
+    "Peanut butter",
+    "Potato (baked with skin)",
+    "Salmon (cooked)",
+    "Walnuts"
+  ],
+  "objective": "cost",
+  "query": "I'm a 71-year-old man, 76 kg. I have high blood pressure. I'm allergic to tree nuts and peanut. I follow a vegetarian diet. Plan a day at 2200-2400 kcal a day.",
+  "expect_infeasible": false
+}

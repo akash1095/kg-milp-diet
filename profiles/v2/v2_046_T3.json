@@ -1,0 +1,23 @@
+{
+  "id": "v2_046_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 58,
+  "weight_kg": 76,
+  "kcal_min": 2100,
+  "kcal_max": 2300,
+  "conditions": [
+    "t2dm",
+    "ckd"
+  ],
+  "allergies": [],
+  "diets": [],
+  "drugs": [],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 58-year-old man, 76 kg. I have type 2 diabetes and chronic kidney disease stage 3. Plan a day at 2100-2300 kcal a day.",
+  "expect_infeasible": false
+}

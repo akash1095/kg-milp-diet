@@ -1,0 +1,19 @@
+{
+  "id": "v2_034_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 38,
+  "weight_kg": 66,
+  "kcal_min": 1700,
+  "kcal_max": 1900,
+  "conditions": [
+    "hypertension"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 38-year-old woman, 66 kg. I have high blood pressure. Plan a day at 1700-1900 kcal a day.",
+  "expect_infeasible": false
+}

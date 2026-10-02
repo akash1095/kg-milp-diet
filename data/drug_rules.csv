@@ -1,3 +1,3 @@
-rule_type,drug_id,target,lo,hi,unit,severity,source,section,url,status
-STABLE,warfarin,vitamin_k_ug,90,150,ug,,NIH ODS vitamin K fact sheet,<to transcribe>,<to transcribe>,placeholder
-AVOID,phenelzine,aged_cheese,,,,high,Drug label (tyramine interaction),<to transcribe>,<to transcribe>,placeholder
+rule_id,rule_type,drug_id,target,lo,hi,unit,severity,source,statement,quote,url,status
+R14,STABLE,warfarin,vitamin_k_ug,90,150,ug,,NIH ODS vitamin K fact sheet,to find,keep vitamin K intake consistent (range 90-150 ug is a modelling assumption),https://ods.od.nih.gov/factsheets/VitaminK-HealthProfessional/,assumption
+R09,AVOID,phenelzine,aged_cheese,,,,high,Phenelzine drug label,to find,avoid high-tyramine foods such as aged cheese,,to-verify

@@ -1,0 +1,21 @@
+{
+  "id": "v2_077_T3",
+  "tier": "T3",
+  "sex": "F",
+  "age": 40,
+  "weight_kg": 58,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "conditions": [
+    "hypertension",
+    "ckd"
+  ],
+  "preferred_foods": [
+    "Potato (baked with skin)",
+    "Banana",
+    "Chicken breast (cooked)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 40-year-old woman, 58 kg. I have high blood pressure and chronic kidney disease stage 3. Plan a day at 1800-2000 kcal a day.",
+  "expect_infeasible": false
+}

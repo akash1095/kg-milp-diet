@@ -1,0 +1,26 @@
+{
+  "id": "v2_044_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 34,
+  "weight_kg": 87,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "conditions": [
+    "t2dm",
+    "hypertension"
+  ],
+  "allergies": [
+    "milk"
+  ],
+  "diets": [],
+  "drugs": [],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Greek yogurt (plain nonfat)",
+    "Potato (baked with skin)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 34-year-old man, 87 kg. I have type 2 diabetes and high blood pressure. I'm allergic to milk. Plan a day at 2000-2200 kcal a day.",
+  "expect_infeasible": false
+}

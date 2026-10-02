@@ -1,0 +1,19 @@
+{
+  "id": "v1_030_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 25,
+  "weight_kg": 69,
+  "kcal_min": 2300,
+  "kcal_max": 2500,
+  "drugs": [
+    "phenelzine"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Parmesan cheese"
+  ],
+  "objective": "cost",
+  "query": "I'm a 25-year-old man, 69 kg. I take phenelzine. I like cheddar cheese. Plan a day at 2300-2500 kcal a day.",
+  "expect_infeasible": false
+}

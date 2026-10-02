@@ -1,0 +1,20 @@
+{
+  "id": "v1_025_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 35,
+  "weight_kg": 66,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "diets": [
+    "jain"
+  ],
+  "preferred_foods": [
+    "Potato (baked with skin)",
+    "Carrot (raw)",
+    "Egg (hard-boiled)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 35-year-old woman, 66 kg. I follow a jain diet. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

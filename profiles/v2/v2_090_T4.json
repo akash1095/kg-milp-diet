@@ -1,0 +1,19 @@
+{
+  "id": "v2_090_T4",
+  "tier": "T4",
+  "sex": "M",
+  "age": 35,
+  "weight_kg": 86,
+  "kcal_min": 2100,
+  "kcal_max": 2300,
+  "conditions": [
+    "t2dm"
+  ],
+  "nutrient_bounds": {
+    "fiber_g": {
+      "max": 10
+    }
+  },
+  "query": "I'm a 35-year-old man, 86 kg. I have type 2 diabetes. Keep fiber under 10 g; it upsets my stomach. Plan a day at 2100-2300 kcal a day.",
+  "expect_infeasible": true
+}

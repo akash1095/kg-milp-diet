@@ -1,0 +1,19 @@
+{
+  "id": "v1_059_T4",
+  "tier": "T4",
+  "sex": "M",
+  "age": 36,
+  "weight_kg": 78,
+  "kcal_min": 2200,
+  "kcal_max": 2400,
+  "conditions": [
+    "hypertension"
+  ],
+  "nutrient_bounds": {
+    "sodium_mg": {
+      "min": 2000
+    }
+  },
+  "query": "I'm a 36-year-old man, 78 kg. I have high blood pressure. I need at least 2,000 mg of sodium for training. Plan a day at 2200-2400 kcal a day.",
+  "expect_infeasible": true
+}

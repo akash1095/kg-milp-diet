@@ -28,6 +28,7 @@ class CompileError(ValueError):
 class CompileOptions:
     """Switches used for ablations; the full method has everything on."""
     hierarchy: bool = True        # follow SUBCLASS_OF*0.. (off = direct tags only)
+    rule_context: bool = True     # honour only_if / except_if between rules (off = flat rule table)
     clinical_rules: bool = True   # Condition LIMITS / REQUIRES (M5-M7)
     drug_rules: bool = True       # Drug STABLE / AVOID (M4, M8)
     diet_rules: bool = True       # DietPattern FORBIDS (M3)
@@ -42,9 +43,12 @@ class Prov:
     path: list[str]
     source: str = ""
     status: str = ""
+    rule_id: str = ""
+    statement: str = ""
 
     def as_dict(self) -> dict:
-        return {"rule": self.rule, "kg_path": self.path, "source": self.source, "status": self.status}
+        return {"rule": self.rule, "rule_id": self.rule_id, "kg_path": self.path, "source": self.source,
+                "statement": self.statement, "status": self.status}
 
 
 @dataclass
@@ -102,6 +106,8 @@ class CompiledModel:
     substitutes: list[dict] = field(default_factory=list)
     preferred: list[str] = field(default_factory=list)
     max_foods: int = 12
+    suspended: list[dict] = field(default_factory=list)   # rules not applied, with the reason
+    advice: list[dict] = field(default_factory=list)      # qualitative rules (not compiled)
 
     @property
     def allowed_foods(self) -> list[str]:
@@ -169,15 +175,20 @@ def compile_spec(kg: KG, spec: UserSpec, options: CompileOptions | None = None) 
 
     # M5-M7: condition rules
     if opts.clinical_rules:
-        for r in kg.q_condition_rules(spec.condition_ids):
-            _compile_rate_rule(kg, cm, r, "M5" if r["rule_type"] == "LIMITS" else "M7")
+        for r in kg.q_condition_rules(spec.condition_ids, context=opts.rule_context):
+            if r["rule_type"] == "ADVISES":
+                cm.advice.append(r)
+            elif not r["active"]:
+                cm.suspended.append(r)
+            else:
+                _compile_rate_rule(kg, cm, r, "M5" if r["rule_type"] == "LIMITS" else "M7")
 
     # M8: drug ranges
     if opts.drug_rules:
         for r in kg.q_drug_stable(spec.drug_ids):
             n = _key(r["nutrient"])
             unit = kg.nodes[r["nutrient"]]["unit"]
-            prov = Prov("M8", r["path"], r.get("source", ""), r.get("status", ""))
+            prov = _prov("M8", r)
             cm.bounds.append(Bound(n, "min", convert(r["lo"], r["unit"], unit), "M8", prov))
             cm.bounds.append(Bound(n, "max", convert(r["hi"], r["unit"], unit), "M8", prov))
 
@@ -224,7 +235,7 @@ def _compile_rate_rule(kg: KG, cm: CompiledModel, r: dict, rule: str) -> None:
         kpg = node.get("kcal_per_g")
         if not kpg:
             raise CompileError(f"{n} has no kcal_per_g; cannot apply a % of energy rule")
-        prov = Prov("M6", r["path"], r.get("source", ""), r.get("status", ""))
+        prov = _prov("M6", r)
         # kcal_per_g * I_n  (<= or >=)  (raw/100) * E
         cm.ratios.append(RatioRow(f"R_{n}_{sense}_pctkcal_{_key(r['owner'])}", n, sense, kpg,
                                   raw / 100.0, "M6", prov,
@@ -232,7 +243,7 @@ def _compile_rate_rule(kg: KG, cm: CompiledModel, r: dict, rule: str) -> None:
         return
     if basis == "per_1000kcal":
         value = convert(raw, r["unit"], node["unit"])
-        prov = Prov("M7", r["path"], r.get("source", ""), r.get("status", ""))
+        prov = _prov("M7", r)
         cm.ratios.append(RatioRow(f"R_{n}_{sense}_per1000_{_key(r['owner'])}", n, sense, 1.0,
                                   value / 1000.0, "M7", prov,
                                   f"{node['name']} {'≤' if sense == 'max' else '≥'} {raw:g} {r['unit']} per 1,000 kcal ({cond})"))
@@ -243,8 +254,28 @@ def _compile_rate_rule(kg: KG, cm: CompiledModel, r: dict, rule: str) -> None:
         value = convert(raw, r["unit"], node["unit"])
     else:
         raise CompileError(f"unknown basis {basis!r} on {r['path']}")
-    prov = Prov(rule, r["path"], r.get("source", ""), r.get("status", ""))
-    cm.bounds.append(Bound(n, sense, value, rule, prov))
+    cm.bounds.append(Bound(n, sense, value, rule, _prov(rule, r)))
+
+
+def _prov(rule: str, r: dict) -> Prov:
+    return Prov(rule, r["path"], r.get("source", ""), r.get("status", ""),
+                r.get("rule_id", ""), r.get("statement", ""))
+
+
+SEMANTIC_RULES = {"M5", "M6", "M7", "M8"}
+
+
+def semantic_rule_set(cm: CompiledModel) -> set[tuple]:
+    """Canonical set of semantic constraints a system applied (for rule-level F1 vs gold)."""
+    out: set[tuple] = {("exclude", f.split(":", 1)[1]) for f in cm.exclusions}
+    for b in cm.bounds:
+        if b.rule in SEMANTIC_RULES:
+            out.add((b.sense, b.nutrient, round(b.value, 3)))
+    for r in cm.ratios:
+        kind = "pct_kcal" if r.rule == "M6" else "per_1000kcal"
+        scale = 100 if r.rule == "M6" else 1000
+        out.add((f"{kind}_{r.sense}", r.nutrient, round(r.coef_energy * scale, 3)))
+    return out
 
 
 def _merge(cm: CompiledModel) -> None:

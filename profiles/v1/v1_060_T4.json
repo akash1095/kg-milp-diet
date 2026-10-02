@@ -1,0 +1,19 @@
+{
+  "id": "v1_060_T4",
+  "tier": "T4",
+  "sex": "F",
+  "age": 71,
+  "weight_kg": 64,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "conditions": [
+    "t2dm"
+  ],
+  "nutrient_bounds": {
+    "fiber_g": {
+      "max": 10
+    }
+  },
+  "query": "I'm a 71-year-old woman, 64 kg. I have type 2 diabetes. Keep fiber under 10 g; it upsets my stomach. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": true
+}

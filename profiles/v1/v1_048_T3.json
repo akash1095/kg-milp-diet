@@ -1,0 +1,24 @@
+{
+  "id": "v1_048_T3",
+  "tier": "T3",
+  "sex": "F",
+  "age": 64,
+  "weight_kg": 58,
+  "kcal_min": 1700,
+  "kcal_max": 1900,
+  "conditions": [
+    "t2dm",
+    "ckd",
+    "hypertension"
+  ],
+  "allergies": [],
+  "diets": [],
+  "drugs": [],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 64-year-old woman, 58 kg. I have type 2 diabetes and chronic kidney disease stage 3 and high blood pressure. Plan a day at 1700-1900 kcal a day.",
+  "expect_infeasible": false
+}

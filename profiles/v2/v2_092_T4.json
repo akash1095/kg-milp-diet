@@ -1,0 +1,20 @@
+{
+  "id": "v2_092_T4",
+  "tier": "T4",
+  "sex": "M",
+  "age": 51,
+  "weight_kg": 71,
+  "kcal_min": 2200,
+  "kcal_max": 2400,
+  "conditions": [
+    "hypertension",
+    "t2dm"
+  ],
+  "nutrient_bounds": {
+    "sodium_mg": {
+      "min": 2500
+    }
+  },
+  "query": "I'm a 51-year-old man, 71 kg. I have high blood pressure and type 2 diabetes. I need at least 2,500 mg of sodium. Plan a day at 2200-2400 kcal a day.",
+  "expect_infeasible": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "v2_027_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 47,
+  "weight_kg": 86,
+  "kcal_min": 2300,
+  "kcal_max": 2500,
+  "drugs": [
+    "warfarin"
+  ],
+  "preferred_foods": [
+    "Kale (raw)",
+    "Spinach (raw)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 47-year-old man, 86 kg. I take warfarin. I like kale. Plan a day at 2300-2500 kcal a day.",
+  "expect_infeasible": false
+}

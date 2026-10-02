@@ -1,0 +1,20 @@
+{
+  "id": "v2_066_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 25,
+  "weight_kg": 75,
+  "kcal_min": 1600,
+  "kcal_max": 1800,
+  "allergies": [
+    "fish"
+  ],
+  "preferred_foods": [
+    "Salmon (cooked)",
+    "Tuna (canned in water)",
+    "Cod (cooked)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 25-year-old woman, 75 kg. I'm allergic to fish. I love salmon. Plan a day at 1600-1800 kcal a day.",
+  "expect_infeasible": false
+}

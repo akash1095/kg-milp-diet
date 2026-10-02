@@ -1,0 +1,12 @@
+{
+  "id": "v2_007_T1",
+  "tier": "T1",
+  "sex": "M",
+  "age": 34,
+  "weight_kg": 82,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "objective": "cost",
+  "query": "I'm a 34-year-old man, 82 kg. I want a balanced day. Plan a day at 2000-2200 kcal a day.",
+  "expect_infeasible": false
+}

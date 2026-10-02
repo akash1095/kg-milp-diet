@@ -1,0 +1,19 @@
+{
+  "id": "v2_036_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 59,
+  "weight_kg": 55,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "conditions": [
+    "ckd"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 59-year-old woman, 55 kg. I have chronic kidney disease stage 3. Plan a day at 1800-2000 kcal a day.",
+  "expect_infeasible": false
+}

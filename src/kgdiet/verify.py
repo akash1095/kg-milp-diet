@@ -88,7 +88,11 @@ class Gold:
                 if cls in anc:
                     rules.append(GoldRule("exclude", fid, label=f"{food['name']}: {drug} avoid {cls}"))
         for r in self.cond_rules:
-            if r["condition_id"] not in conds:
+            if r["condition_id"] not in conds or r["rule_type"] == "ADVISES":
+                continue
+            needs = [c for c in r["only_if"].split("|") if c]
+            unless = [c for c in r["except_if"].split("|") if c]
+            if any(c not in conds for c in needs) or any(c in conds for c in unless):
                 continue
             sense = "max" if r["rule_type"] == "LIMITS" else "min"
             v = float(r["value"])
@@ -112,6 +116,15 @@ class Gold:
                 rules.append(GoldRule("max", r["nutrient_id"], float(r["ul"]),
                                       f"DRI upper limit {r['nutrient_id']} {r['ul']}", semantic=False))
         return rules
+
+    def gold_rule_set(self, spec: UserSpec) -> set[tuple]:
+        """Canonical semantic constraints the gold standard says must apply."""
+        out = set()
+        for r in self.gold_rules(spec):
+            if not r.semantic:
+                continue
+            out.add(("exclude", r.target) if r.kind == "exclude" else (r.kind, r.target, round(r.value, 3)))
+        return out
 
     def evaluate(self, spec: UserSpec, servings: dict[str, int], intake: dict[str, float]) -> Evaluation:
         ev = Evaluation(n_foods=len(servings))
@@ -143,3 +156,13 @@ class Gold:
                 for r in self.dri if r["stage_id"] == stage and r["rda"]]
         ev.shortfall = round(sum(gaps) / len(gaps), 4) if gaps else 0.0
         return ev
+
+
+def rule_f1(system: set[tuple], gold: set[tuple]) -> dict:
+    """Precision / recall / F1 of the applied semantic constraint set against gold."""
+    tp = len(system & gold)
+    p = tp / len(system) if system else 1.0
+    r = tp / len(gold) if gold else 1.0
+    f1 = 2 * p * r / (p + r) if p + r else 0.0
+    return {"precision": round(p, 4), "recall": round(r, 4), "f1": round(f1, 4),
+            "false_rules": sorted(map(str, system - gold)), "missed_rules": sorted(map(str, gold - system))}

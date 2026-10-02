@@ -1,0 +1,19 @@
+{
+  "id": "v2_012_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 40,
+  "weight_kg": 90,
+  "kcal_min": 2100,
+  "kcal_max": 2300,
+  "allergies": [
+    "tree nuts"
+  ],
+  "preferred_foods": [
+    "Almonds",
+    "Walnuts"
+  ],
+  "objective": "cost",
+  "query": "I'm a 40-year-old man, 90 kg. I'm allergic to tree nuts, but I love almonds. Plan a day at 2100-2300 kcal a day.",
+  "expect_infeasible": false
+}

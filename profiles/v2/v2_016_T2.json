@@ -1,0 +1,19 @@
+{
+  "id": "v2_016_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 51,
+  "weight_kg": 66,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "allergies": [
+    "milk"
+  ],
+  "preferred_foods": [
+    "Greek yogurt (plain nonfat)",
+    "Cheddar cheese"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 51-year-old man, 66 kg. I'm allergic to milk, but I love greek yogurt. Plan a day at 2000-2200 kcal a day.",
+  "expect_infeasible": false
+}

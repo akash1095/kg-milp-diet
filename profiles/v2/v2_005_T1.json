@@ -1,0 +1,12 @@
+{
+  "id": "v2_005_T1",
+  "tier": "T1",
+  "sex": "F",
+  "age": 39,
+  "weight_kg": 72,
+  "kcal_min": 1600,
+  "kcal_max": 1800,
+  "objective": "nutrition",
+  "query": "I'm a 39-year-old woman, 72 kg. I want a balanced day. Plan a day at 1600-1800 kcal a day.",
+  "expect_infeasible": false
+}

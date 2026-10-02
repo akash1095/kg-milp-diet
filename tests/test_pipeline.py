@@ -58,17 +58,44 @@ def test_tightest_bound_and_provenance(kg):
     hi = cm.merged["sodium_mg"]["hi"]
     assert hi["value"] == 1500
     assert "Condition:hypertension" in hi["binding"][0].prov.path
+    assert hi["binding"][0].prov.rule_id == "R04"
     assert "B_sodium_mg_hi" in cm.provenance_registry()
 
 
 def test_per_kg_rule(kg):
     cm = compile_spec(kg, spec(kg, weight_kg=60, conditions=["ckd"]))
-    assert cm.merged["protein_g"]["hi"]["value"] == pytest.approx(48.0)
+    assert cm.merged["protein_g"]["hi"]["value"] == pytest.approx(36.0)  # KDOQI 3.0.1: 0.6 g/kg
 
 
-def test_presolve_conflict_detected(kg):
+def test_exception_suspends_potassium_rule(kg):
     cm = compile_spec(kg, spec(kg, age=62, sex="M", conditions=["hypertension", "ckd"]))
-    assert [c.nutrient for c in cm.conflicts] == ["potassium_mg"]
+    assert not cm.conflicts
+    assert "potassium_mg" not in cm.merged or not cm.merged["potassium_mg"].get("lo")
+    assert any(r["rule_id"] == "R05" and r["blocked"] == ["Condition:ckd3"] for r in cm.suspended)
+
+
+def test_conditional_protein_rules_for_diabetic_ckd(kg):
+    cm = compile_spec(kg, spec(kg, weight_kg=70, conditions=["t2dm", "ckd"]))
+    m = cm.merged["protein_g"]
+    assert m["lo"]["value"] == pytest.approx(56.0) and m["hi"]["value"] == pytest.approx(56.0)
+    assert not cm.conflicts
+
+
+def test_flat_table_creates_false_conflict(kg):
+    flat = CompileOptions(hierarchy=False, rule_context=False)
+    cm = compile_spec(kg, spec(kg, weight_kg=70, conditions=["t2dm", "ckd"]), flat)
+    assert [c.nutrient for c in cm.conflicts] == ["protein_g"]
+
+
+def test_qualitative_rules_are_advice_not_constraints(kg):
+    cm = compile_spec(kg, spec(kg, conditions=["ckd"]))
+    assert {r["rule_id"] for r in cm.advice} == {"R12", "R13"}
+    assert "phosphorus_mg" not in cm.merged
+
+
+def test_user_target_conflict_detected(kg):
+    cm = compile_spec(kg, spec(kg, weight_kg=70, conditions=["ckd"], nutrient_bounds={"protein_g": {"min": 120}}))
+    assert [c.nutrient for c in cm.conflicts] == ["protein_g"]
 
 
 def test_full_plan_passes_independent_check(kg):

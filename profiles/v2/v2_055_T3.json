@@ -1,0 +1,28 @@
+{
+  "id": "v2_055_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 37,
+  "weight_kg": 75,
+  "kcal_min": 2100,
+  "kcal_max": 2300,
+  "conditions": [
+    "ckd"
+  ],
+  "allergies": [
+    "egg"
+  ],
+  "diets": [],
+  "drugs": [
+    "phenelzine"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Egg (hard-boiled)",
+    "Parmesan cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 37-year-old man, 75 kg. I have chronic kidney disease stage 3. I'm allergic to egg. I take phenelzine. Plan a day at 2100-2300 kcal a day.",
+  "expect_infeasible": false
+}

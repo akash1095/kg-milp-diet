@@ -17,8 +17,12 @@ import pulp
 
 from .compiler import CompiledModel, Prov
 from .kg import KG
+from .verify import TOL
 
 ELASTIC_PENALTY = 1000.0
+# Benchmark protocol (fixed before run 2, identical for every system): a stated
+# preference ("I love X") is worth half of one fully missed DRI goal.
+PREFERENCE_WEIGHT = 0.5
 PER_MEAL_MAX_SERVINGS = 2
 
 
@@ -42,17 +46,18 @@ class Plan:
         return self.status == "optimal"
 
 
-def plan(kg: KG, cm: CompiledModel, time_limit: int = 30, solver: str = "auto") -> Plan:
+def plan(kg: KG, cm: CompiledModel, time_limit: int = 30, solver: str = "auto",
+         threads: int | None = None) -> Plan:
     """Strict solve; on a compile-time conflict or solver infeasibility, run the elastic repair."""
     conflicts = [{
         "nutrient": c.nutrient, "lower": c.lo, "upper": c.hi,
         "lower_from": [p.as_dict() for p in c.lo_provs],
         "upper_from": [p.as_dict() for p in c.hi_provs]} for c in cm.conflicts]
     if not conflicts:
-        strict = solve(kg, cm, elastic=False, time_limit=time_limit, solver=solver)
-        if strict.status in ("optimal", "error"):
+        strict = solve(kg, cm, elastic=False, time_limit=time_limit, solver=solver, threads=threads)
+        if strict.status in ("optimal", "error", "no_plan"):
             return strict
-    relaxed = solve(kg, cm, elastic=True, time_limit=time_limit, solver=solver)
+    relaxed = solve(kg, cm, elastic=True, time_limit=time_limit, solver=solver, threads=threads)
     relaxed.conflicts = conflicts
     if relaxed.status == "optimal":
         relaxed.status = "infeasible_relaxed"
@@ -65,7 +70,7 @@ def plan(kg: KG, cm: CompiledModel, time_limit: int = 30, solver: str = "auto") 
 
 
 def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30,
-          solver: str = "auto") -> Plan:
+          solver: str = "auto", threads: int | None = None) -> Plan:
     t0 = time.perf_counter()
     prob = pulp.LpProblem("diet", pulp.LpMinimize)
     foods = cm.allowed_foods
@@ -102,7 +107,10 @@ def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30
             slacks.append((name, e, max(1.0, abs(rhs)), provs))
             prob.addConstraint((expr + e >= rhs) if sense == "min" else (expr - e <= rhs), name)
         else:
-            prob.addConstraint((expr >= rhs) if sense == "min" else (expr <= rhs), name)
+            # same relative tolerance as the checker (TOL), so point ranges such as
+            # 0.8 <= protein/kg <= 0.8 become narrow but full-dimensional bands
+            tol_rhs = rhs * (1 - TOL) if sense == "min" else rhs * (1 + TOL)
+            prob.addConstraint((expr >= tol_rhs) if sense == "min" else (expr <= tol_rhs), name)
 
     # --- hard nutrient bounds (merged) ---------------------------------------
     for n, m in cm.merged.items():
@@ -132,7 +140,7 @@ def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30
         if f in q:
             terms.append(0.5 * q[f])
     terms.append(0.002 * pulp.lpSum(y.values()))
-    terms.append(-0.05 * pulp.lpSum(y[f] for f in cm.preferred if f in y))
+    terms.append(-PREFERENCE_WEIGHT * pulp.lpSum(y[f] for f in cm.preferred if f in y))
     cost_expr = pulp.lpSum((fn[f]["price_per_100g"] or 0.0) * fn[f]["serving_g"] / 100.0 * q[f] for f in foods)
     terms.append((0.05 if cm.spec.objective == "cost" else 0.0005) * cost_expr)
     for name, e, scale, _ in slacks:
@@ -143,7 +151,7 @@ def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30
     if solver == "auto":
         solver = "highs" if "HiGHS" in pulp.listSolvers(onlyAvailable=True) else "cbc"
     if solver == "highs":
-        engine = pulp.HiGHS(msg=False, timeLimit=time_limit, gapRel=0.01)
+        engine = pulp.HiGHS(msg=False, timeLimit=time_limit, gapRel=0.01, threads=threads)
     else:
         engine = pulp.PULP_CBC_CMD(msg=False, timeLimit=time_limit, gapRel=0.01)
     try:
@@ -152,8 +160,9 @@ def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30
         return Plan(status="error", message=str(exc), solve_ms=_ms(t0))
     status = pulp.LpStatus[prob.status]
     if status != "Optimal":
-        return Plan(status="infeasible" if status == "Infeasible" else "error",
-                    message=f"solver status: {status}", solve_ms=_ms(t0))
+        kind = {"Infeasible": "infeasible", "Not Solved": "no_plan"}.get(status, "error")
+        return Plan(status=kind, message=f"solver status: {status} (time limit {time_limit} s)"
+                    if kind == "no_plan" else f"solver status: {status}", solve_ms=_ms(t0))
 
     plan_ = Plan(status="optimal", objective=pulp.value(prob.objective), solve_ms=_ms(t0), solver=solver,
                  proven_optimal=prob.sol_status == pulp.LpSolutionOptimal)

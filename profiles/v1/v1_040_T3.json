@@ -1,0 +1,27 @@
+{
+  "id": "v1_040_T3",
+  "tier": "T3",
+  "sex": "M",
+  "age": 54,
+  "weight_kg": 80,
+  "kcal_min": 2300,
+  "kcal_max": 2500,
+  "conditions": [
+    "hypertension",
+    "ckd"
+  ],
+  "allergies": [
+    "fish"
+  ],
+  "diets": [],
+  "drugs": [],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)",
+    "Salmon (cooked)",
+    "Tuna (canned in water)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 54-year-old man, 80 kg. I have high blood pressure and chronic kidney disease stage 3. I'm allergic to fish. Plan a day at 2300-2500 kcal a day.",
+  "expect_infeasible": false
+}

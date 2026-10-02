@@ -1,0 +1,12 @@
+{
+  "id": "v2_003_T1",
+  "tier": "T1",
+  "sex": "F",
+  "age": 30,
+  "weight_kg": 65,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "objective": "nutrition",
+  "query": "I'm a 30-year-old woman, 65 kg. I want a balanced day. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

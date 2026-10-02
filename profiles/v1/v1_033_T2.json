@@ -1,0 +1,19 @@
+{
+  "id": "v1_033_T2",
+  "tier": "T2",
+  "sex": "M",
+  "age": 65,
+  "weight_kg": 77,
+  "kcal_min": 2000,
+  "kcal_max": 2200,
+  "conditions": [
+    "hypertension"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Potato (baked with skin)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 65-year-old man, 77 kg. I have high blood pressure. Plan a day at 2000-2200 kcal a day.",
+  "expect_infeasible": false
+}

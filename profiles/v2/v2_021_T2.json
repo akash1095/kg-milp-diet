@@ -1,0 +1,20 @@
+{
+  "id": "v2_021_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 54,
+  "weight_kg": 63,
+  "kcal_min": 1700,
+  "kcal_max": 1900,
+  "diets": [
+    "vegan"
+  ],
+  "preferred_foods": [
+    "Greek yogurt (plain nonfat)",
+    "Egg (hard-boiled)",
+    "Chicken breast (cooked)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 54-year-old woman, 63 kg. I follow a vegan diet. Plan a day at 1700-1900 kcal a day.",
+  "expect_infeasible": false
+}

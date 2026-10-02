@@ -1,0 +1,20 @@
+{
+  "id": "v2_069_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 73,
+  "weight_kg": 70,
+  "kcal_min": 1800,
+  "kcal_max": 2000,
+  "diets": [
+    "vegan"
+  ],
+  "preferred_foods": [
+    "Greek yogurt (plain nonfat)",
+    "Cheddar cheese",
+    "Milk (2% fat)"
+  ],
+  "objective": "nutrition",
+  "query": "I'm a 73-year-old woman, 70 kg. I follow a vegan diet. Plan a day at 1800-2000 kcal a day.",
+  "expect_infeasible": false
+}

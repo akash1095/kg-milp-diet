@@ -1,0 +1,31 @@
+{
+  "id": "v2_051_T3",
+  "tier": "T3",
+  "sex": "F",
+  "age": 26,
+  "weight_kg": 60,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "conditions": [
+    "t2dm"
+  ],
+  "allergies": [],
+  "diets": [
+    "vegan"
+  ],
+  "drugs": [
+    "warfarin"
+  ],
+  "preferred_foods": [
+    "Cheddar cheese",
+    "Chicken breast (cooked)",
+    "Egg (hard-boiled)",
+    "Greek yogurt (plain nonfat)",
+    "Kale (raw)",
+    "Potato (baked with skin)",
+    "Spinach (raw)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 26-year-old woman, 60 kg. I have type 2 diabetes. I follow a vegan diet. I take warfarin. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

@@ -1,0 +1,18 @@
+{
+  "id": "v1_018_T2",
+  "tier": "T2",
+  "sex": "F",
+  "age": 30,
+  "weight_kg": 60,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "allergies": [
+    "egg"
+  ],
+  "preferred_foods": [
+    "Egg (hard-boiled)"
+  ],
+  "objective": "cost",
+  "query": "I'm a 30-year-old woman, 60 kg. I'm allergic to egg, but I love egg. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": false
+}

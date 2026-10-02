@@ -5,3 +5,7 @@ __pycache__/
 cypher/load.cypher
 *.lp
 *.mps
+
+# raw USDA download (large; re-download from fdc.nal.usda.gov)
+data/FoodData_Central_*/
+results/*/run.log

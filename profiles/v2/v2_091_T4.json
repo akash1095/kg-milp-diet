@@ -1,0 +1,20 @@
+{
+  "id": "v2_091_T4",
+  "tier": "T4",
+  "sex": "F",
+  "age": 70,
+  "weight_kg": 65,
+  "kcal_min": 1900,
+  "kcal_max": 2100,
+  "conditions": [
+    "t2dm",
+    "ckd"
+  ],
+  "nutrient_bounds": {
+    "protein_g": {
+      "max": 40
+    }
+  },
+  "query": "I'm a 70-year-old woman, 65 kg. I have type 2 diabetes and chronic kidney disease stage 3. Keep protein under 40 g. Plan a day at 1900-2100 kcal a day.",
+  "expect_infeasible": true
+}

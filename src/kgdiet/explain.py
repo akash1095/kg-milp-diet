@@ -51,6 +51,19 @@ def explain_records(kg: KG, cm: CompiledModel, plan_: Plan) -> list[dict]:
                         "source": b.prov.source})
     for r in cm.ratios:
         out.append({"rule": r.rule, "text": f"{r.label} [{_src(r.prov)}].", "source": r.prov.source})
+    for r in cm.suspended:
+        why = (f"not applied because you also have {', '.join(kg.name(x) for x in r['blocked'])}"
+               if r["blocked"] else
+               f"applies only with {', '.join(kg.name(x) for x in r['missing'])}")
+        node = kg.nodes[r["nutrient"]]
+        out.append({"rule": r.get("rule_id", ""), "text": f"{kg.name(r['owner'])} rule on {node['name']} "
+                                                         f"{why} [{r.get('source', '')}, {r.get('statement', '')}].",
+                    "source": r.get("source", "")})
+    for r in cm.advice:
+        out.append({"rule": r.get("rule_id", ""), "text": f"Advice for {kg.name(r['owner'])} (not a numeric "
+                                                         f"constraint): \"{r.get('quote', '')}\" "
+                                                         f"[{r.get('source', '')}, {r.get('statement', '')}].",
+                    "source": r.get("source", "")})
     for s in cm.substitutes:
         out.append({"rule": "M12", "text": f"You prefer {kg.name(s['for'])}, which is excluded; "
                                            f"suggested substitute: {kg.name(s['substitute'])} "
