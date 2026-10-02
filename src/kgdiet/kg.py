@@ -1,9 +1,11 @@
-"""In-memory property graph for the diet KG.
+"""Diet KG backends.
 
-Each ``q_*`` method mirrors one parameterized Cypher template in
-``cypher/templates.cypher``, so the compiler works the same whether the
-graph lives here or in Neo4j. Every returned row carries the KG path that
-produced it (used later as constraint provenance).
+``KG`` is the in-memory property graph built from ``data/*.csv`` (the source of
+truth). ``kgdiet.neo4j_kg.Neo4jKG`` runs the same queries against Neo4j. Both
+share ``BaseKG``; each ``q_*`` method mirrors one Cypher template in
+``cypher/templates.cypher`` and returns identical rows on either backend. Every
+returned row carries the KG path that produced it (used later as constraint
+provenance). Use ``open_kg()`` to get the configured backend.
 """
 from __future__ import annotations
 
@@ -27,6 +29,7 @@ class Edge:
     src: str
     dst: str
     props: dict = field(default_factory=dict)
+    seq: int = 0  # load order; Neo4j stores it so both backends return rows in the same order
 
 
 def _read(path: Path) -> list[dict]:
@@ -39,13 +42,59 @@ def _num(value: str | None) -> float | None:
     return float(value) if value not in (None, "") else None
 
 
-class KG:
-    """Nodes are keyed by globally unique ids with a label prefix, e.g. ``Food:F01``."""
+class BaseKG:
+    """Shared interface. Nodes are keyed by ids with a label prefix, e.g. ``Food:F01``.
+
+    ``nodes`` maps id -> {"label", "key", **props} for every node; subclasses
+    fill it and implement the edge queries.
+    """
 
     def __init__(self) -> None:
         self.nodes: dict[str, dict] = {}
+
+    def out(self, nid: str, etype: str) -> list[Edge]:
+        raise NotImplementedError
+
+    def food_nutrients(self, food: str) -> dict[str, float]:
+        raise NotImplementedError
+
+    # ---------------------------------------------------------------- helpers
+    def ids(self, label: str) -> list[str]:
+        return [nid for nid, n in self.nodes.items() if n["label"] == label]
+
+    def name(self, nid: str) -> str:
+        return self.nodes[nid].get("name", nid)
+
+    def resolve(self, label: str, text: str) -> str | None:
+        """Map a user word (id, name or alias) to a node id of ``label``."""
+        t = _norm(text)
+        for nid in self.ids(label):
+            n = self.nodes[nid]
+            names = {_norm(n["key"]), _norm(str(n.get("name", "")))}
+            names |= {_norm(a) for a in n.get("aliases", [])}
+            if t in names:
+                return nid
+        return None
+
+    def food_class(self, food: str) -> str:
+        return self.out(food, "IS_A")[0].dst
+
+    def q_life_stage(self, sex: str, age: int) -> str | None:
+        for nid in self.ids("LifeStage"):
+            n = self.nodes[nid]
+            if n["sex"] == sex.upper()[0] and n["age_min"] <= age <= n["age_max"]:
+                return nid
+        return None
+
+
+class KG(BaseKG):
+    """In-memory backend, built from the CSV tables."""
+
+    def __init__(self) -> None:
+        super().__init__()
         self.out_edges: dict[str, list[Edge]] = defaultdict(list)
         self.in_edges: dict[str, list[Edge]] = defaultdict(list)
+        self._seq = 0
 
     # ------------------------------------------------------------------ build
     def add_node(self, label: str, key: str, **props) -> str:
@@ -56,7 +105,8 @@ class KG:
     def add_edge(self, etype: str, src: str, dst: str, **props) -> None:
         if src not in self.nodes or dst not in self.nodes:
             raise KeyError(f"{etype}: unknown node {src if src not in self.nodes else dst}")
-        edge = Edge(etype, src, dst, props)
+        self._seq += 1
+        edge = Edge(etype, src, dst, props, self._seq)
         self.out_edges[src].append(edge)
         self.in_edges[dst].append(edge)
 
@@ -140,28 +190,11 @@ class KG:
         return kg
 
     # ---------------------------------------------------------------- helpers
-    def ids(self, label: str) -> list[str]:
-        return [nid for nid, n in self.nodes.items() if n["label"] == label]
-
-    def name(self, nid: str) -> str:
-        return self.nodes[nid].get("name", nid)
-
     def out(self, nid: str, etype: str) -> list[Edge]:
         return [e for e in self.out_edges[nid] if e.type == etype]
 
     def inc(self, nid: str, etype: str) -> list[Edge]:
         return [e for e in self.in_edges[nid] if e.type == etype]
-
-    def resolve(self, label: str, text: str) -> str | None:
-        """Map a user word (id, name or alias) to a node id of ``label``."""
-        t = _norm(text)
-        for nid in self.ids(label):
-            n = self.nodes[nid]
-            names = {_norm(n["key"]), _norm(str(n.get("name", "")))}
-            names |= {_norm(a) for a in n.get("aliases", [])}
-            if t in names:
-                return nid
-        return None
 
     def descendants(self, nid: str, max_depth: int | None = None) -> dict[str, list[str]]:
         """Nodes reachable by walking SUBCLASS_OF backwards (``*0..max_depth``), with paths."""
@@ -181,9 +214,6 @@ class KG:
     def food_nutrients(self, food: str) -> dict[str, float]:
         return {e.dst.split(":", 1)[1]: e.props["amount_per_100g"] for e in self.out(food, "CONTAINS")}
 
-    def food_class(self, food: str) -> str:
-        return self.out(food, "IS_A")[0].dst
-
     # ------------------------------------------------- queries (Cypher mirrors)
     def q_allergen_foods(self, allergies: list[str], hierarchy: bool = True) -> list[dict]:
         """M2: (a)<-[:SUBCLASS_OF*0..]-(sub)<-[:HAS_ALLERGEN]-(f)."""
@@ -191,11 +221,7 @@ class KG:
         for a in allergies:
             for sub, path in self.descendants(a, None if hierarchy else 0).items():
                 for e in self.inc(sub, "HAS_ALLERGEN"):
-                    rows.append({"food": e.src, "reason": a, "via": sub,
-                                 "path": ["User", "HAS_ALLERGY", a]
-                                 + _hops(path, "SUBCLASS_OF")
-                                 + ["HAS_ALLERGEN(inv)", e.src],
-                                 "source": "user allergy + allergen hierarchy"})
+                    rows.append(allergen_row(a, sub, path, e.src))
         return rows
 
     def _class_foods(self, cls: str, hierarchy: bool) -> list[tuple[str, list[str]]]:
@@ -211,10 +237,7 @@ class KG:
         for p in diets:
             for e in self.out(p, "FORBIDS"):
                 for food, path in self._class_foods(e.dst, hierarchy):
-                    rows.append({"food": food, "reason": p, "via": e.dst,
-                                 "path": ["User", "FOLLOWS", p, "FORBIDS"]
-                                 + _hops(path, "SUBCLASS_OF") + ["IS_A(inv)", food],
-                                 "source": e.props.get("source", "")})
+                    rows.append(diet_row(p, e.dst, e.props, path, food))
         return rows
 
     def q_drug_avoid_foods(self, drugs: list[str], hierarchy: bool = True) -> list[dict]:
@@ -223,11 +246,7 @@ class KG:
         for d in drugs:
             for e in self.out(d, "AVOID"):
                 for food, path in self._class_foods(e.dst, hierarchy):
-                    rows.append({"food": food, "reason": d, "via": e.dst,
-                                 "severity": e.props.get("severity", "high"),
-                                 "path": ["User", "TAKES", d, "AVOID"]
-                                 + _hops(path, "SUBCLASS_OF") + ["IS_A(inv)", food],
-                                 "source": e.props.get("source", "")})
+                    rows.append(drug_avoid_row(d, e.dst, e.props, path, food))
         return rows
 
     def q_condition_rules(self, conditions: list[str], context: bool = True) -> list[dict]:
@@ -238,40 +257,16 @@ class KG:
         kept so explanations can say why a rule was not applied. With
         ``context=False`` every rule is active (a flat rule table).
         """
-        have = set(conditions)
-        rows = []
-        for c in conditions:
-            for e in self.out_edges[c]:
-                if e.type not in ("LIMITS", "REQUIRES", "ADVISES"):
-                    continue
-                missing = [x for x in e.props.get("only_if", []) if x not in have]
-                blocked = [x for x in e.props.get("except_if", []) if x in have]
-                active = not context or (not missing and not blocked)
-                path = ["User", "HAS_CONDITION", c, e.type, e.dst]
-                if context and e.props.get("only_if"):
-                    path += ["ONLY_IF", *e.props["only_if"]]
-                rows.append({"rule_type": e.type, "owner": c, "nutrient": e.dst, **e.props,
-                             "active": active, "missing": missing, "blocked": blocked, "path": path})
-        return rows
+        return [condition_row(c, e.type, e.dst, e.props, conditions, context)
+                for c in conditions for e in self.out_edges[c] if e.type in RULE_TYPES]
 
     def q_drug_stable(self, drugs: list[str]) -> list[dict]:
         """M8: (u)-[:TAKES]->(d)-[r:STABLE]->(n)."""
-        return [{"owner": d, "nutrient": e.dst, **e.props,
-                 "path": ["User", "TAKES", d, "STABLE", e.dst]}
-                for d in drugs for e in self.out(d, "STABLE")]
+        return [drug_stable_row(d, e.dst, e.props) for d in drugs for e in self.out(d, "STABLE")]
 
     def q_dri(self, stage: str) -> list[dict]:
         """M9/M10: (u)-[:IN_GROUP]->(g)-[r:DRI]->(n)."""
-        return [{"owner": stage, "nutrient": e.dst, **e.props,
-                 "path": ["User", "IN_GROUP", stage, "DRI", e.dst]}
-                for e in self.out(stage, "DRI")]
-
-    def q_life_stage(self, sex: str, age: int) -> str | None:
-        for nid in self.ids("LifeStage"):
-            n = self.nodes[nid]
-            if n["sex"] == sex.upper()[0] and n["age_min"] <= age <= n["age_max"]:
-                return nid
-        return None
+        return [dri_row(stage, e.dst, e.props) for e in self.out(stage, "DRI")]
 
     def q_meal_slots(self) -> dict[str, dict]:
         """M11: MealSlot shares + (f)-[:SUITABLE_FOR]->(m)."""
@@ -295,6 +290,72 @@ class KG:
             for e in edges:
                 etypes[e.type] += 1
         return {"nodes": dict(labels), "edges": dict(etypes)}
+
+
+# ------------------------------------------------ query rows (both backends)
+RULE_TYPES = ("LIMITS", "REQUIRES", "ADVISES")
+
+
+def allergen_row(allergen: str, via: str, chain: list[str], food: str) -> dict:
+    return {"food": food, "reason": allergen, "via": via,
+            "path": ["User", "HAS_ALLERGY", allergen] + _hops(chain, "SUBCLASS_OF")
+            + ["HAS_ALLERGEN(inv)", food],
+            "source": "user allergy + allergen hierarchy"}
+
+
+def diet_row(diet: str, cls: str, props: dict, chain: list[str], food: str) -> dict:
+    return {"food": food, "reason": diet, "via": cls,
+            "path": ["User", "FOLLOWS", diet, "FORBIDS"] + _hops(chain, "SUBCLASS_OF")
+            + ["IS_A(inv)", food],
+            "source": props.get("source", "")}
+
+
+def drug_avoid_row(drug: str, cls: str, props: dict, chain: list[str], food: str) -> dict:
+    return {"food": food, "reason": drug, "via": cls,
+            "severity": props.get("severity", "high"),
+            "path": ["User", "TAKES", drug, "AVOID"] + _hops(chain, "SUBCLASS_OF")
+            + ["IS_A(inv)", food],
+            "source": props.get("source", "")}
+
+
+def condition_row(cond: str, etype: str, nutrient: str, props: dict, conditions: list[str],
+                  context: bool) -> dict:
+    have = set(conditions)
+    missing = [x for x in props.get("only_if", []) if x not in have]
+    blocked = [x for x in props.get("except_if", []) if x in have]
+    active = not context or (not missing and not blocked)
+    path = ["User", "HAS_CONDITION", cond, etype, nutrient]
+    if context and props.get("only_if"):
+        path += ["ONLY_IF", *props["only_if"]]
+    return {"rule_type": etype, "owner": cond, "nutrient": nutrient, **props,
+            "active": active, "missing": missing, "blocked": blocked, "path": path}
+
+
+def drug_stable_row(drug: str, nutrient: str, props: dict) -> dict:
+    return {"owner": drug, "nutrient": nutrient, **props,
+            "path": ["User", "TAKES", drug, "STABLE", nutrient]}
+
+
+def dri_row(stage: str, nutrient: str, props: dict) -> dict:
+    return {"owner": stage, "nutrient": nutrient, **props,
+            "path": ["User", "IN_GROUP", stage, "DRI", nutrient]}
+
+
+# ------------------------------------------------------------------ backends
+def open_kg(backend: str | None = None, data_dir: str | Path | None = None, **neo4j_kwargs) -> BaseKG:
+    """Return the configured KG backend: ``neo4j`` (default) or ``memory``.
+
+    The backend comes from the argument, then ``KGDIET_BACKEND``, then ``neo4j``.
+    ``data_dir`` is only read by the memory backend; load Neo4j with ``kgdiet neo4j-load``.
+    """
+    from .neo4j_kg import env
+    backend = (backend or env("KGDIET_BACKEND") or "neo4j").lower()
+    if backend == "memory":
+        return KG.load(data_dir or DEFAULT_DATA_DIR)
+    if backend == "neo4j":
+        from .neo4j_kg import Neo4jKG
+        return Neo4jKG(**neo4j_kwargs)
+    raise ValueError(f"unknown KG backend {backend!r} (use neo4j or memory)")
 
 
 def _stage_name(r: dict) -> str:

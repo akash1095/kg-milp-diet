@@ -22,11 +22,14 @@ egg, fish) with subclasses**, plus 2 drugs, 3 diet patterns and 4 meal slots.
 
 ## Setup
 
-Requires [Poetry](https://python-poetry.org/) and Python >= 3.10.
+Requires [Poetry](https://python-poetry.org/) and Python 3.14 and Docker (for Neo4j).
 
 ```powershell
 cd D:\Projects\kg-milp-diet
 poetry install              # add -E llm for the optional LLM layer
+copy .env.example .env      # then set NEO4J_PASSWORD
+docker compose up -d        # Neo4j on bolt://localhost:7694, Browser http://localhost:7481
+poetry run kgdiet neo4j-load
 poetry run pytest
 poetry run kgdiet stats
 ```
@@ -35,10 +38,28 @@ poetry run kgdiet stats
 dependency group (pytest) by default. Prefix any command with `poetry run`,
 or `poetry shell` to activate the virtualenv for the session.
 
+## Where the knowledge lives
+
+- `data/*.csv` is the source of truth. Edit the knowledge there; it is versioned in git.
+- `kgdiet neo4j-load` builds the graph from the CSVs and replaces the Neo4j graph with it.
+  Run it again after every CSV change.
+- The planner reads the KG from **Neo4j** by default (`src/kgdiet/neo4j_kg.py`, queries in
+  `cypher/templates.cypher`). `--backend memory` (or `KGDIET_BACKEND=memory`) builds the
+  same graph in memory from the CSVs instead, with no Docker needed. Both backends return
+  identical rows, so plans are the same; `tests/test_neo4j_backend.py` checks this.
+- The unit tests use the memory backend. The Neo4j parity tests reload Neo4j from the CSVs
+  and are skipped when the container is down.
+
+To explore the graph, open http://localhost:7481, drag `cypher/style.grass` onto the
+Browser for colours and captions, and paste queries from `cypher/explore.cypher`
+(schema, class and allergen trees, rule tables with quotes, exclusion paths, data checks).
+
 ## Try it
 
 ```powershell
+kgdiet neo4j-load                                        # rebuild Neo4j from data\*.csv
 kgdiet stats                                             # KG node and edge counts
+kgdiet --backend memory solve profiles\p07_t2dm_htn_treenut.json   # same plan, no Neo4j
 kgdiet solve profiles\p07_t2dm_htn_treenut.json          # plan + reasons + independent check
 kgdiet solve profiles\p03_tree_nut_allergy.json --no-hierarchy   # watch the allergy slip through
 kgdiet solve profiles\p10_htn_ckd3_conflict.json         # conflict detection and repair
@@ -64,8 +85,10 @@ validator, which rejects any term it cannot map to a KG node.
 | Path | What it holds |
 | --- | --- |
 | `data/*.csv` | KG source tables: foods, nutrients, classes, allergens, rules with provenance |
-| `src/kgdiet/kg.py` | In-memory property graph; each `q_*` method mirrors a Cypher template |
-| `cypher/templates.cypher` | The same queries as parameterized Cypher (for Neo4j) |
+| `src/kgdiet/kg.py` | Shared KG interface, in-memory backend, `open_kg()` backend factory |
+| `src/kgdiet/neo4j_kg.py` | Neo4j backend and the loader (`kgdiet neo4j-load`) |
+| `cypher/templates.cypher` | Every query the Neo4j backend runs, by name |
+| `cypher/explore.cypher`, `cypher/style.grass` | Browser queries and stylesheet for exploring the KG |
 | `src/kgdiet/spec.py` | JSON spec schema and validator (term → KG node) |
 | `src/kgdiet/compiler.py` | Mapping rules M1-M12: units, tightest-bound merge, conflicts, provenance |
 | `src/kgdiet/model.py` | MILP goal program, elastic repair when infeasible |
@@ -129,4 +152,4 @@ result measures what the baselines miss. Earlier runs: `results/v1`, `results/v2
 1. Verify every rule in `data/condition_rules.csv` against its guideline statement.
 2. Grow the benchmark toward 300 profiles.
 3. Later papers: CP-SAT / QP solver comparison; LLM front end (`src/kgdiet/llm.py`, parked).
-4. Optional: a Neo4j backend that runs `cypher/templates.cypher` behind the same interface.
+4. Load the full USDA SR Legacy food table into Neo4j (the backend no longer limits KG size).

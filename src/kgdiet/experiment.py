@@ -16,7 +16,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from .compiler import CompileOptions, compile_spec, semantic_rule_set
-from .kg import KG
+from .kg import open_kg
 from .model import plan
 from .spec import UserSpec
 from .verify import Gold, rule_f1
@@ -41,9 +41,9 @@ _CACHE: dict = {}
 
 
 def _one(task: tuple) -> dict:
-    raw, name, data_dir, time_limit = task
-    if "kg" not in _CACHE:
-        _CACHE["kg"] = KG.load(data_dir) if data_dir else KG.load()
+    raw, name, data_dir, time_limit, backend, neo4j = task
+    if "kg" not in _CACHE:  # once per worker process
+        _CACHE["kg"] = open_kg(backend, data_dir, **neo4j)
         _CACHE["gold"] = Gold(data_dir) if data_dir else Gold()
     kg, gold = _CACHE["kg"], _CACHE["gold"]
     spec = UserSpec.from_dict(raw).resolve(kg)
@@ -70,9 +70,10 @@ def _one(task: tuple) -> dict:
 
 
 def run(profiles_dir: str | Path, out_dir: str | Path, systems: list[str] | None = None,
-        data_dir: str | Path | None = None, time_limit: int = 30, jobs: int = 1) -> list[dict]:
+        data_dir: str | Path | None = None, time_limit: int = 30, jobs: int = 1,
+        backend: str | None = None, neo4j: dict | None = None) -> list[dict]:
     from concurrent.futures import ProcessPoolExecutor
-    tasks = [(raw, name, str(data_dir) if data_dir else None, time_limit)
+    tasks = [(raw, name, str(data_dir) if data_dir else None, time_limit, backend, neo4j or {})
              for raw in load_profiles(profiles_dir) for name in (systems or list(SYSTEMS))]
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)

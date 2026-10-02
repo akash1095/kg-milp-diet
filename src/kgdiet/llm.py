@@ -10,7 +10,7 @@ import json
 import os
 import re
 
-from .kg import KG
+from .kg import BaseKG
 from .spec import SPEC_SCHEMA
 
 DEFAULT_MODEL = os.environ.get("KGDIET_LLM_MODEL", "claude-sonnet-5")
@@ -26,14 +26,14 @@ def _client():
     return anthropic.Anthropic()
 
 
-def vocabulary(kg: KG) -> dict[str, list[str]]:
+def vocabulary(kg: BaseKG) -> dict[str, list[str]]:
     def names(label: str) -> list[str]:
         return sorted(kg.nodes[n]["key"] for n in kg.ids(label))
     return {"conditions": names("Condition"), "allergies": names("Allergen"),
             "drugs": names("Drug"), "diets": names("DietPattern"), "nutrients": names("Nutrient")}
 
 
-def parse_query(kg: KG, query: str, profile_id: str = "adhoc", model: str = DEFAULT_MODEL) -> dict:
+def parse_query(kg: BaseKG, query: str, profile_id: str = "adhoc", model: str = DEFAULT_MODEL) -> dict:
     prompt = (
         "Convert the user's diet request into a JSON object with exactly these fields:\n"
         f"{json.dumps(SPEC_SCHEMA, indent=1)}\n\n"

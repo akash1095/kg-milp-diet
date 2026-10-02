@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 import pulp
 
 from .compiler import CompiledModel, Prov
-from .kg import KG
+from .kg import BaseKG
 from .verify import TOL
 
 ELASTIC_PENALTY = 1000.0
@@ -46,7 +46,7 @@ class Plan:
         return self.status == "optimal"
 
 
-def plan(kg: KG, cm: CompiledModel, time_limit: int = 30, solver: str = "auto",
+def plan(kg: BaseKG, cm: CompiledModel, time_limit: int = 30, solver: str = "auto",
          threads: int | None = None) -> Plan:
     """Strict solve; on a compile-time conflict or solver infeasibility, run the elastic repair."""
     conflicts = [{
@@ -69,7 +69,7 @@ def plan(kg: KG, cm: CompiledModel, time_limit: int = 30, solver: str = "auto",
     return relaxed
 
 
-def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30,
+def solve(kg: BaseKG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30,
           solver: str = "auto", threads: int | None = None) -> Plan:
     t0 = time.perf_counter()
     prob = pulp.LpProblem("diet", pulp.LpMinimize)
@@ -182,7 +182,7 @@ def solve(kg: KG, cm: CompiledModel, elastic: bool = False, time_limit: int = 30
     return plan_
 
 
-def compute_intake(kg: KG, servings: dict[str, int]) -> dict[str, float]:
+def compute_intake(kg: BaseKG, servings: dict[str, int]) -> dict[str, float]:
     totals: dict[str, float] = {}
     for f, s in servings.items():
         g = kg.nodes[f]["serving_g"] * s

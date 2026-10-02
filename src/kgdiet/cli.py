@@ -8,12 +8,20 @@ from pathlib import Path
 
 from .compiler import CompileOptions, compile_spec
 from .explain import explain_records, format_plan
-from .kg import KG
+from .kg import KG, open_kg
 from .model import plan
 from .spec import SpecError, UserSpec
 from .verify import Gold
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def _kg(args):
+    return open_kg(args.backend, args.data, **_neo4j(args))
+
+
+def _neo4j(args) -> dict:
+    return {k: v for k, v in (("uri", args.uri), ("user", args.user), ("database", args.database)) if v}
 
 
 def _options(args) -> CompileOptions:
@@ -22,7 +30,7 @@ def _options(args) -> CompileOptions:
 
 
 def cmd_solve(args) -> int:
-    kg = KG.load(args.data)
+    kg = _kg(args)
     raw = json.loads(Path(args.profile).read_text(encoding="utf-8"))
     if args.cost:
         raw["objective"] = "cost"
@@ -60,7 +68,7 @@ def cmd_solve(args) -> int:
 
 def cmd_parse(args) -> int:
     from .llm import parse_query
-    kg = KG.load(args.data)
+    kg = _kg(args)
     spec = parse_query(kg, args.query, profile_id=args.id)
     try:
         UserSpec.from_dict(spec).resolve(kg)
@@ -78,14 +86,31 @@ def cmd_parse(args) -> int:
 def cmd_experiment(args) -> int:
     from .experiment import run
     rows = run(args.profiles, args.out, systems=args.systems, data_dir=args.data, time_limit=args.time_limit,
-               jobs=args.jobs)
+               jobs=args.jobs, backend=args.backend, neo4j=_neo4j(args))
     print((Path(args.out) / "summary.md").read_text(encoding="utf-8"))
     print(f"{len(rows)} runs written to {Path(args.out) / 'runs.csv'}")
     return 0
 
 
 def cmd_stats(args) -> int:
-    print(json.dumps(KG.load(args.data).stats(), indent=2))
+    kg = _kg(args)
+    print(f"backend: {getattr(kg, 'uri', 'memory (' + str(args.data) + ')')}", file=sys.stderr)
+    print(json.dumps(kg.stats(), indent=2))
+    return 0
+
+
+def cmd_neo4j_load(args) -> int:
+    from .neo4j_kg import connect, env, push
+    driver = connect(args.uri, args.user)
+    try:
+        counts = push(KG.load(args.data), driver, database=args.database, source=str(args.data))
+    finally:
+        driver.close()
+    print(f"Loaded {sum(counts['nodes'].values())} nodes and {sum(counts['edges'].values())} relationships "
+          f"from {args.data}")
+    print(json.dumps(counts, indent=2))
+    print(f"Browse: http://localhost:{env('NEO4J_HTTP_PORT', '7481')}  (queries: cypher/explore.cypher, "
+          "style: cypher/style.grass)")
     return 0
 
 
@@ -102,6 +127,11 @@ def main(argv: list[str] | None = None) -> int:
         pass
     ap = argparse.ArgumentParser(prog="kgdiet", description="KG-to-MILP diet planner prototype")
     ap.add_argument("--data", default=str(ROOT / "data"), help="folder with the KG CSV tables")
+    ap.add_argument("--backend", choices=["neo4j", "memory"],
+                    help="where the planner reads the KG (default: KGDIET_BACKEND, else neo4j)")
+    ap.add_argument("--uri", help="Neo4j bolt URI (default: NEO4J_URI, else bolt://localhost:7694)")
+    ap.add_argument("--user", help="Neo4j user (default: NEO4J_USER); the password is read from NEO4J_PASSWORD")
+    ap.add_argument("--database", help="Neo4j database (default: NEO4J_DATABASE, else neo4j)")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("solve", help="plan one profile and explain it")
@@ -137,8 +167,16 @@ def main(argv: list[str] | None = None) -> int:
     x.add_argument("--out", default=str(ROOT / "cypher" / "load.cypher"))
     x.set_defaults(func=cmd_export)
 
+    n = sub.add_parser("neo4j-load", help="replace the Neo4j graph with the KG built from --data")
+    n.set_defaults(func=cmd_neo4j_load)
+
     args = ap.parse_args(argv)
-    return args.func(args)
+    from .neo4j_kg import KGUnavailable
+    try:
+        return args.func(args)
+    except KGUnavailable as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

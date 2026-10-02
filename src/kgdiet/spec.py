@@ -9,7 +9,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .kg import KG
+from .kg import BaseKG
 
 SPEC_SCHEMA = {
     "id": "str (profile id)",
@@ -79,7 +79,7 @@ class UserSpec:
     def from_file(cls, path: str | Path) -> "UserSpec":
         return cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8")))
 
-    def resolve(self, kg: KG) -> "UserSpec":
+    def resolve(self, kg: BaseKG) -> "UserSpec":
         """Validate values and map every term to a KG node id (raises SpecError)."""
         errors = []
         if self.sex.upper()[:1] not in ("F", "M"):

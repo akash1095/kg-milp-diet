@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .kg import KG
+from .kg import BaseKG
 from .spec import UserSpec
 
 UNIT_FACTORS = {"g": 1.0, "mg": 1e-3, "ug": 1e-6, "µg": 1e-6, "mcg": 1e-6}
@@ -141,7 +141,7 @@ def convert(value: float, unit: str, target_unit: str) -> float:
     return value * UNIT_FACTORS[unit] / UNIT_FACTORS[target_unit]
 
 
-def compile_spec(kg: KG, spec: UserSpec, options: CompileOptions | None = None) -> CompiledModel:
+def compile_spec(kg: BaseKG, spec: UserSpec, options: CompileOptions | None = None) -> CompiledModel:
     opts = options or CompileOptions()
     if spec.life_stage is None:
         spec.resolve(kg)
@@ -224,7 +224,7 @@ def compile_spec(kg: KG, spec: UserSpec, options: CompileOptions | None = None) 
     return cm
 
 
-def _compile_rate_rule(kg: KG, cm: CompiledModel, r: dict, rule: str) -> None:
+def _compile_rate_rule(kg: BaseKG, cm: CompiledModel, r: dict, rule: str) -> None:
     n = _key(r["nutrient"])
     node = kg.nodes[r["nutrient"]]
     basis = r["basis"]

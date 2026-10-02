@@ -1,0 +1,103 @@
+node {
+  diameter: 50px;
+  color: #A5ABB6;
+  border-color: #9AA1AC;
+  border-width: 2px;
+  text-color-internal: #FFFFFF;
+  font-size: 10px;
+  caption: "{name}";
+}
+relationship {
+  color: #A5ABB6;
+  shaft-width: 1px;
+  font-size: 8px;
+  padding: 3px;
+  text-color-external: #000000;
+  text-color-internal: #FFFFFF;
+  caption: "<type>";
+}
+node.Food {
+  color: #57C7E3;
+  border-color: #23B3D7;
+  text-color-internal: #2A2C34;
+  diameter: 45px;
+  caption: "{name}";
+}
+node.FoodClass {
+  color: #8DCC93;
+  border-color: #5DB665;
+  text-color-internal: #2A2C34;
+  diameter: 55px;
+  caption: "{name}";
+}
+node.Allergen {
+  color: #F16667;
+  border-color: #EB2728;
+  text-color-internal: #FFFFFF;
+  caption: "{name}";
+}
+node.Nutrient {
+  color: #FFE081;
+  border-color: #9F8C5A;
+  text-color-internal: #2A2C34;
+  caption: "{name}";
+}
+node.Condition {
+  color: #C990C0;
+  border-color: #B261A5;
+  text-color-internal: #FFFFFF;
+  diameter: 65px;
+  caption: "{name}";
+}
+node.Drug {
+  color: #F79767;
+  border-color: #F36924;
+  text-color-internal: #FFFFFF;
+  diameter: 65px;
+  caption: "{name}";
+}
+node.DietPattern {
+  color: #4C8EDA;
+  border-color: #2870C2;
+  text-color-internal: #FFFFFF;
+  diameter: 65px;
+  caption: "{name}";
+}
+node.LifeStage {
+  color: #D9C8AE;
+  border-color: #C0A378;
+  text-color-internal: #2A2C34;
+  caption: "{name}";
+}
+node.MealSlot {
+  color: #ECB5C9;
+  border-color: #DA7298;
+  text-color-internal: #2A2C34;
+  caption: "{name}";
+}
+relationship.LIMITS {
+  color: #EB2728;
+  shaft-width: 2px;
+  caption: "<type>";
+}
+relationship.REQUIRES {
+  color: #5DB665;
+  shaft-width: 2px;
+  caption: "<type>";
+}
+relationship.AVOID {
+  color: #EB2728;
+  shaft-width: 2px;
+  caption: "<type>";
+}
+relationship.FORBIDS {
+  color: #EB2728;
+  shaft-width: 2px;
+  caption: "<type>";
+}
+relationship.CONTAINS {
+  caption: "{amount_per_100g}";
+}
+relationship.SUBSTITUTE_FOR {
+  caption: "{similarity}";
+}

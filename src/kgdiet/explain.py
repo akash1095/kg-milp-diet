@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections import defaultdict
 
 from .compiler import CompiledModel
-from .kg import KG
+from .kg import BaseKG
 from .model import Plan
 
 
@@ -21,7 +21,7 @@ def _src(p) -> str:
     return f"{p.source}{tag}" if p.source else "KG"
 
 
-def explain_records(kg: KG, cm: CompiledModel, plan_: Plan) -> list[dict]:
+def explain_records(kg: BaseKG, cm: CompiledModel, plan_: Plan) -> list[dict]:
     """Structured statements, each tied to rule ids and KG paths."""
     out: list[dict] = []
     grouped: dict[tuple, list[str]] = defaultdict(list)
@@ -81,7 +81,7 @@ def explain_records(kg: KG, cm: CompiledModel, plan_: Plan) -> list[dict]:
     return out
 
 
-def format_plan(kg: KG, cm: CompiledModel, plan_: Plan) -> str:
+def format_plan(kg: BaseKG, cm: CompiledModel, plan_: Plan) -> str:
     lines = [f"Profile {cm.spec.id}: status = {plan_.status}"
              + (f" ({plan_.message})" if plan_.message else "")]
     if plan_.servings:
